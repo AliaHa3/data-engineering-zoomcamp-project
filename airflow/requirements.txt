@@ -4,3 +4,5 @@ pandas
 sqlalchemy
 psycopg2-binary
 dbt-bigquery==1.0.0
+google-cloud-storage
+google-cloud-bigquery
