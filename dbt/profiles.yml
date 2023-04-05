@@ -1,10 +1,10 @@
-streamify:
+earthquakes:
   outputs:
     dev:
-      dataset: streamify_stg
+      dataset: earthquake_stg
       fixed_retries: 1
       keyfile: /.google/credentials/google_credentials.json
-      location: us-central1
+      location: europe-west6
       method: service-account
       priority: interactive
       project: "{{ env_var('GCP_PROJECT_ID') }}"
@@ -12,10 +12,10 @@ streamify:
       timeout_seconds: 300
       type: bigquery
     prod:
-      dataset: streamify_prod
+      dataset: earthquake_prod
       fixed_retries: 1
       keyfile: /.google/credentials/google_credentials.json
-      location: us-central1
+      location: europe-west6
       method: service-account
       priority: interactive
       project: "{{ env_var('GCP_PROJECT_ID') }}"
