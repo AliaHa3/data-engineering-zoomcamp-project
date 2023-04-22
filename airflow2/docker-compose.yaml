@@ -44,8 +44,7 @@ x-airflow-common:
   # In order to add custom dependencies or upgrade provider packages you can use your extended image.
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
-  
-  build: 
+  build:
     context: .
     dockerfile: ./Dockerfile
   environment:
@@ -58,19 +57,20 @@ x-airflow-common:
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- dbt-bigquery==1.0.0}
-    GOOGLE_APPLICATION_CREDENTIALS: ~/.google/credentials/google_credentials.json
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-}
+    GOOGLE_APPLICATION_CREDENTIALS: /.google/credentials/google_credentials.json
     AIRFLOW_CONN_GOOGLE_CLOUD_DEFAULT: 'google-cloud-platform://?extra__google_cloud_platform__key_path=/.google/credentials/google_credentials.json'
-    GCP_PROJECT_ID: '${GCP_PROJECT_ID}'
-    GCP_GCS_BUCKET: '${GCP_GCS_BUCKET}'
-  
+
+    # TODO: Please change GCP_PROJECT_ID & GCP_GCS_BUCKET, as per your config
+    GCP_PROJECT_ID: 'dezoomcamp-375819'
+    GCP_GCS_BUCKET: 'earthquakes_data_lake_dezoomcamp-375819'
+
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - ./plugins:/opt/airflow/plugins
-    - ../dbt:/dbt
     - ~/.google/credentials/:/.google/credentials:ro
-    - ~/.dbt:/home/airflow/.dbt:ro
+
   user: "${AIRFLOW_UID:-50000}:0"
   depends_on:
     &airflow-common-depends-on
