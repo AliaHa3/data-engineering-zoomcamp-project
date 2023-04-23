@@ -17,8 +17,8 @@ external_table_name = 'daily_staging'
 # dag = DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
 #   start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1, user_defined_macros=MACRO_VARS)
 
-def extract_data_to_local(ti,url, file_name, data_folder_path="."):
-    ti.xcom_push(key="general", value={"local_file_path":local_file_path,
+def extract_data_to_local(url, file_name, data_folder_path=".",**kwargs):
+    kwargs['ti'].xcom_push(key="general", value={"local_file_path":local_file_path,
                                                      "file_name":file_name})
     
     df = pd.read_csv(url)
@@ -32,9 +32,9 @@ def extract_data_to_local(ti,url, file_name, data_folder_path="."):
     return {"local_file_path":local_file_path, "file_name":file_name}
 
 
-def upload_to_bucket(ti,blob_name, bucket_name=GCP_GCS_BUCKET):
-    print(ti)
-    xcom_data = ti.xcom_pull(key="general", task_ids="extract_data_to_local")
+def upload_to_bucket(blob_name, bucket_name=GCP_GCS_BUCKET,**kwargs):
+    print(kwargs['ti'])
+    xcom_data = kwargs['ti'].xcom_pull(key="general", task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
     print(dict_data)
@@ -76,8 +76,8 @@ def check_table_exists(table_name):
     return result
 
 
-def create_external_table(ti,table_name, file_name="*"):
-    xcom_data = ti.xcom_pull(key="general", task_ids="extract_data_to_local")
+def create_external_table(ti,table_name, file_name="*",**kwargs):
+    xcom_data = kwargs['ti'].xcom_pull(key="general", task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
     print(dict_data)
