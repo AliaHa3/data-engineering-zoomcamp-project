@@ -72,7 +72,7 @@ def upload_to_bucket(**kwargs):
 
     local_file_path = dict_data['local_file_path']
     blob_name = f"earthquakes/{dict_data['file_name']}.csv.gz"
-    
+
     """ Upload data to a bucket"""
     storage_client = storage.Client.from_service_account_json(
         SERVICE_ACCOUNT_JSON_PATH)
@@ -170,7 +170,7 @@ local_to_gcs_task = PythonOperator(
 
 clear_local_files_task = BashOperator(
     task_id=f"clear_local_files_task",
-    bash_command=f"rm {local_file_path}",
+    bash_command=f'rm { ti.xcom_pull(key="general3",task_ids="gcs_to_bq_external_task")["local_file_path"]}',
     dag=dag
 )
 
