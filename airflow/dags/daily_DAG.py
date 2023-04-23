@@ -171,7 +171,6 @@ with DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
 
     clear_local_files_task = BashOperator(
         task_id=f"clear_local_files_task",
-        provide_context = True,
         bash_command=f"rm {local_file_path}"
     )
 
