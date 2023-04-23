@@ -67,6 +67,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 ## Finish Python packages
 
 WORKDIR $AIRFLOW_HOME
+RUN mkdir data
 
 RUN chmod 777 dags
 RUN chmod 777 logs
