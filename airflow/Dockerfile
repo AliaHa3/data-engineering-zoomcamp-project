@@ -70,5 +70,6 @@ WORKDIR $AIRFLOW_HOME
 
 RUN chmod 777 dags
 RUN chmod 777 logs
+RUN chmod 777 data
 
 USER $AIRFLOW_UID

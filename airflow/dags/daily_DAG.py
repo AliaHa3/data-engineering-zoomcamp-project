@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
+from airflow.operators.bash import BashOperator
 import os
 
 
@@ -41,15 +42,7 @@ timestamp = str(datetime.now()).replace(
     "-", "").replace(":", "").replace(" ", "")[:14]
 file_name = f'data_{starttime.replace("-","").replace(":","")}_{endtime.replace("-","").replace(":","")}_{timestamp}'
 dataset_url = f"https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime={starttime}&endtime={endtime}"
-local_file_path = f"./{file_name}.csv.gz"
-
-print(file_name)
-print(dataset_url)
-print(local_file_path)
-print(GCP_PROJECT_ID)
-print(GCP_GCS_BUCKET)
-print(BQ_DATASET_STAGING)
-print(EXECUTION_DATETIME_STR)
+local_file_path = f"/opt/airflow/data/{file_name}.csv.gz"
 
 MACRO_VARS = {"GCP_PROJECT_ID": GCP_PROJECT_ID,
               "BIGQUERY_DATASET": BQ_DATASET_STAGING,
@@ -61,7 +54,7 @@ def extract_data_to_local(url, file_name, data_folder_path="."):
     df = pd.read_csv(url)
     print(df.head())
 
-    local_file_path = f"{data_folder_path}/{file_name}.csv.gz"
+    # local_file_path = f"{data_folder_path}/{file_name}.csv.gz"
 
     # df.to_parquet(path,index=False, compression="gzip")
     df.to_csv(local_file_path, index=False, compression="gzip")
@@ -141,7 +134,7 @@ extract_data_to_local_task = PythonOperator(
     task_id=f"extract_data_to_local_task",
     python_callable=extract_data_to_local,
     op_kwargs={
-        "dataset_url": dataset_url,
+        "url": dataset_url,
         "file_name": file_name
     }
 )
@@ -164,8 +157,8 @@ gcs_to_bq_external_task = PythonOperator(
     task_id=f"gcs_to_bq_external_task",
     python_callable=create_external_table,
     op_kwargs={
-        "table_name": f"{external_table_name}"
-        "file_name": f"{file_name}"
+        "table_name": f"{external_table_name}",
+        "file_name": file_name
     }
 )
 

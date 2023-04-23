@@ -42,14 +42,13 @@ pastYear = past_date.year
 starttime = f"{pastYear}-{pastMonth:02}-{pastDay:02}T{pastHour:02}:{pastMinute:02}:{pastSecond:02}"
 endtime = f"{currentYear}-{currentMonth:02}-{currentDay:02}T{currentHour:02}:{currentMinute:02}:{currentSecond:02}"
 timestamp = str(datetime.now()).replace(
-        "-", "").replace(":", "").replace(" ", "")[:14]
+    "-", "").replace(":", "").replace(" ", "")[:14]
 file_name = f'data_{starttime.replace("-","").replace(":","")}_{endtime.replace("-","").replace(":","")}_{timestamp}'
 dataset_url = f"https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime={starttime}&endtime={endtime}"
 local_file_path = f"data/{file_name}.csv.gz"
 
 MACRO_VARS = {"GCP_PROJECT_ID": GCP_PROJECT_ID, "BIGQUERY_DATASET": BQ_DATASET_STAGING,
-        "EXECUTION_DATETIME_STR": EXECUTION_DATETIME_STR}
-
+              "EXECUTION_DATETIME_STR": EXECUTION_DATETIME_STR}
 
 
 def print_hello():
@@ -64,23 +63,22 @@ def print_hello():
 
 
 dag = DAG('Spark_DAG', description='Spark_DAG Test',
-        schedule_interval='5 * * * *',
-        start_date=datetime(2023, 4, 22),
-        catchup=False,
-        user_defined_macros=MACRO_VARS)
+          schedule_interval='5 * * * *',
+          start_date=datetime(2023, 4, 22),
+          catchup=False,
+          user_defined_macros=MACRO_VARS)
 
 hello_operator = PythonOperator(
-        task_id='hello_task', python_callable=print_hello, dag=dag)
+    task_id='hello_task', python_callable=print_hello, dag=dag)
 
 pwd_task = BashOperator(
-        task_id='print_dir',
-        bash_command='ls /opt/airflow/dags/'
-        )
+    task_id='print_dir',
+    bash_command='ls /opt/airflow/dags/'
+)
 
 execute_spark_task = BashOperator(
-        task_id='spark_job_run',
-        bash_command='python /opt/airflow/dags/spark_job.py'
-        )
+    task_id='spark_job_run',
+    bash_command='python /opt/airflow/dags/spark_job.py'
+)
 
 hello_operator >> pwd_task >> execute_spark_task
-
