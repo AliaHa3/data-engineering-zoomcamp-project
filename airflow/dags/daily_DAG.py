@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash import BashOperator
-import os,json
+import os
+import json
 
 
 GCP_PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
@@ -14,13 +15,43 @@ BQ_DATASET_STAGING = os.environ.get('BIGQUERY_DATASET', 'earthquake_stg')
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 external_table_name = 'daily_staging'
 
+EXECUTION_MONTH = '{{ logical_date.strftime("%-m") }}'
+EXECUTION_DAY = '{{ logical_date.strftime("%-d") }}'
+EXECUTION_HOUR = '{{ logical_date.strftime("%-H") }}'
+EXECUTION_DATETIME_STR = '{{ logical_date.strftime("%m%d%H") }}'
+
+current_date = datetime.now()
+currentSecond = current_date.second
+currentMinute = current_date.minute
+currentHour = current_date.hour
+currentDay = current_date.day
+currentMonth = current_date.month
+currentYear = current_date.year
+
+past_date = datetime.now() - timedelta(hours=1)
+pastSecond = past_date.second
+pastMinute = past_date.minute
+pastHour = past_date.hour
+pastDay = past_date.day
+pastMonth = past_date.month
+pastYear = past_date.year
+
+starttime = f"{pastYear}-{pastMonth:02}-{pastDay:02}T{pastHour:02}:{pastMinute:02}:{pastSecond:02}"
+endtime = f"{currentYear}-{currentMonth:02}-{currentDay:02}T{currentHour:02}:{currentMinute:02}:{currentSecond:02}"
+timestamp = str(datetime.now()).replace(
+    "-", "").replace(":", "").replace(" ", "")[:14]
+file_name = f'data_{starttime.replace("-","").replace(":","")}_{endtime.replace("-","").replace(":","")}_{timestamp}'
+dataset_url = f"https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime={starttime}&endtime={endtime}"
+local_file_path = f"/opt/airflow/data/{file_name}.csv.gz"
+
+
 # dag = DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
 #   start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1, user_defined_macros=MACRO_VARS)
 
-def extract_data_to_local(url, file_name, data_folder_path=".",**kwargs):
-    kwargs['ti'].xcom_push(key="general", value={"local_file_path":local_file_path,
-                                                     "file_name":file_name})
-    
+def extract_data_to_local(url, file_name, data_folder_path=".", **kwargs):
+    kwargs['ti'].xcom_push(key="general", value={"local_file_path": local_file_path,
+                                                 "file_name": file_name})
+
     df = pd.read_csv(url)
     print(df.head())
 
@@ -28,13 +59,15 @@ def extract_data_to_local(url, file_name, data_folder_path=".",**kwargs):
 
     # df.to_parquet(path,index=False, compression="gzip")
     df.to_csv(local_file_path, index=False, compression="gzip")
-    
-    return {"local_file_path":local_file_path, "file_name":file_name}
+
+    # return {"local_file_path": local_file_path, "file_name": file_name}
 
 
-def upload_to_bucket(blob_name, bucket_name=GCP_GCS_BUCKET,**kwargs):
+def upload_to_bucket(blob_name, bucket_name=GCP_GCS_BUCKET, **kwargs):
+    print(kwargs)
     print(kwargs['ti'])
-    xcom_data = kwargs['ti'].xcom_pull(key="general", task_ids="extract_data_to_local")
+    xcom_data = kwargs['ti'].xcom_pull(
+        key="general", task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
     print(dict_data)
@@ -76,8 +109,9 @@ def check_table_exists(table_name):
     return result
 
 
-def create_external_table(ti,table_name, file_name="*",**kwargs):
-    xcom_data = kwargs['ti'].xcom_pull(key="general", task_ids="extract_data_to_local")
+def create_external_table(ti, table_name, file_name="*", **kwargs):
+    xcom_data = kwargs['ti'].xcom_pull(
+        key="general", task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
     print(dict_data)
@@ -110,78 +144,48 @@ def print_hello():
     return 'Hello world from first Airflow DAG!'
 
 
-with DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
-         start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1) as dag:
+dag = DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
+          start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1)
 
-    EXECUTION_MONTH = '{{ logical_date.strftime("%-m") }}'
-    EXECUTION_DAY = '{{ logical_date.strftime("%-d") }}'
-    EXECUTION_HOUR = '{{ logical_date.strftime("%-H") }}'
-    EXECUTION_DATETIME_STR = '{{ logical_date.strftime("%m%d%H") }}'
+hello_operator = PythonOperator(
+    task_id='hello_task', python_callable=print_hello, dag=dag)
 
-    current_date = datetime.now()
-    currentSecond = current_date.second
-    currentMinute = current_date.minute
-    currentHour = current_date.hour
-    currentDay = current_date.day
-    currentMonth = current_date.month
-    currentYear = current_date.year
+extract_data_to_local_task = PythonOperator(
+    task_id=f"extract_data_to_local_task",
+    python_callable=extract_data_to_local,
+    provide_context=True,
+    dag=dag,
+    op_kwargs={
+        "url": dataset_url,
+        "file_name": file_name
+    }
+)
 
-    past_date = datetime.now() - timedelta(hours=1)
-    pastSecond = past_date.second
-    pastMinute = past_date.minute
-    pastHour = past_date.hour
-    pastDay = past_date.day
-    pastMonth = past_date.month
-    pastYear = past_date.year
+local_to_gcs_task = PythonOperator(
+    task_id=f"local_to_gcs_task",
+    python_callable=upload_to_bucket,
+    provide_context=True,
+    dag=dag,
+    op_kwargs={
+        "blob_name": f"earthquakes/{file_name}.csv.gz"
+    }
+)
 
-    starttime = f"{pastYear}-{pastMonth:02}-{pastDay:02}T{pastHour:02}:{pastMinute:02}:{pastSecond:02}"
-    endtime = f"{currentYear}-{currentMonth:02}-{currentDay:02}T{currentHour:02}:{currentMinute:02}:{currentSecond:02}"
-    timestamp = str(datetime.now()).replace(
-        "-", "").replace(":", "").replace(" ", "")[:14]
-    file_name = f'data_{starttime.replace("-","").replace(":","")}_{endtime.replace("-","").replace(":","")}_{timestamp}'
-    dataset_url = f"https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime={starttime}&endtime={endtime}"
-    local_file_path = f"/opt/airflow/data/{file_name}.csv.gz"
+clear_local_files_task = BashOperator(
+    task_id=f"clear_local_files_task",
+    bash_command=f"rm {local_file_path}",
+    dag=dag
+)
 
-    # MACRO_VARS = {"GCP_PROJECT_ID": GCP_PROJECT_ID,
-    #               "BIGQUERY_DATASET": BQ_DATASET_STAGING,
-    #               "EXECUTION_DATETIME_STR": EXECUTION_DATETIME_STR
-    #               }
+gcs_to_bq_external_task = PythonOperator(
+    task_id=f"gcs_to_bq_external_task",
+    python_callable=create_external_table,
+    provide_context=True,
+    dag=dag,
+    op_kwargs={
+        "table_name": f"{external_table_name}",
+        "file_name": "file_name"
+    }
+)
 
-    hello_operator = PythonOperator(
-        task_id='hello_task', python_callable=print_hello, dag=dag)
-
-    extract_data_to_local_task = PythonOperator(
-        task_id=f"extract_data_to_local_task",
-        python_callable=extract_data_to_local,
-        provide_context = True,
-        op_kwargs={
-            "url": dataset_url,
-            "file_name": file_name
-        }
-    )
-
-    local_to_gcs_task = PythonOperator(
-        task_id=f"local_to_gcs_task",
-        python_callable=upload_to_bucket,
-        provide_context = True,
-        op_kwargs={
-            "blob_name": f"earthquakes/{file_name}.csv.gz"
-        }
-    )
-
-    clear_local_files_task = BashOperator(
-        task_id=f"clear_local_files_task",
-        bash_command=f"rm {local_file_path}"
-    )
-
-    gcs_to_bq_external_task = PythonOperator(
-        task_id=f"gcs_to_bq_external_task",
-        python_callable=create_external_table,
-        provide_context = True,
-        op_kwargs={
-            "table_name": f"{external_table_name}",
-            "file_name": "file_name"
-        }
-    )
-
-    extract_data_to_local_task >> local_to_gcs_task >> gcs_to_bq_external_task >> clear_local_files_task
+extract_data_to_local_task >> local_to_gcs_task >> gcs_to_bq_external_task >> clear_local_files_task
