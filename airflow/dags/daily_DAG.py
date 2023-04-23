@@ -65,10 +65,10 @@ def extract_data_to_local(url, file_name, **kwargs):
 def upload_to_bucket(blob_name, **kwargs):
     print(kwargs)
     print(kwargs['ti'])
-    xcom_data = kwargs['ti'].xcom_pull(key="general",task_ids="extract_data_to_local_task")
-    print(xcom_data)
-    dict_data = json.loads(xcom_data)
-    print(dict_data)
+    dict_data = kwargs['ti'].xcom_pull(key="general",task_ids="extract_data_to_local_task")
+    # print(xcom_data)
+    # dict_data = json.loads(xcom_data)
+    # print(dict_data)
 
     local_file_path = dict_data['local_file_path']
 
@@ -108,10 +108,11 @@ def check_table_exists(table_name):
 
 
 def create_external_table(table_name, **kwargs):
-    xcom_data = kwargs['ti'].xcom_pull(task_ids="extract_data_to_local_task")
-    print(xcom_data)
-    dict_data = json.loads(xcom_data)
+    print(kwargs['ti'])
+    dict_data = kwargs['ti'].xcom_pull(task_ids="extract_data_to_local_task")
     print(dict_data)
+    # dict_data = json.loads(xcom_data)
+    # print(dict_data)
 
     file_name = dict_data['file_name']
 
