@@ -49,6 +49,7 @@ local_file_path = f"/opt/airflow/data/{file_name}.csv.gz"
 #   start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1, user_defined_macros=MACRO_VARS)
 
 def extract_data_to_local(url, file_name, **kwargs):
+    print(url)
     df = pd.read_csv(url)
     print(df.head())
 
