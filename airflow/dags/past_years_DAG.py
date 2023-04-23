@@ -12,12 +12,16 @@ import os
 GCP_PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 GCP_GCS_BUCKET = os.environ.get('GCP_GCS_BUCKET')
 BQ_DATASET_STAGING = os.environ.get('BIGQUERY_DATASET', 'earthquake_stg')
+START_YEAR = int(os.getenv("START_YEAR", "2022"))
+
 table_name = 'raw_data'
+
 
 EXECUTION_MONTH = '{{ logical_date.strftime("%-m") }}'
 EXECUTION_DAY = '{{ logical_date.strftime("%-d") }}'
 EXECUTION_HOUR = '{{ logical_date.strftime("%-H") }}'
 EXECUTION_DATETIME_STR = '{{ logical_date.strftime("%m%d%H") }}'
+
 
 current_date = datetime.now()
 currentSecond = current_date.second
@@ -43,16 +47,9 @@ file_name = f'data_{starttime.replace("-","").replace(":","")}_{endtime.replace(
 dataset_url = f"https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&starttime={starttime}&endtime={endtime}"
 local_file_path = f"data/{file_name}.csv.gz"
 
-print(file_name)
-print(dataset_url)
-print(local_file_path)
-print(GCP_PROJECT_ID)
-print(GCP_GCS_BUCKET)
-print(BQ_DATASET_STAGING)
-print(EXECUTION_DATETIME_STR)
-
 MACRO_VARS = {"GCP_PROJECT_ID": GCP_PROJECT_ID, "BIGQUERY_DATASET": BQ_DATASET_STAGING,
         "EXECUTION_DATETIME_STR": EXECUTION_DATETIME_STR}
+
 
 
 def print_hello():
