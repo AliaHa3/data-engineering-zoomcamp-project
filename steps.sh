@@ -18,3 +18,4 @@ docker-compose down --volumes --rmi all
 docker-compose down --volumes --remove-orphans
 
 docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "ls /opt/spark/python/lib"
+docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "ls /opt/airflow/data/"
