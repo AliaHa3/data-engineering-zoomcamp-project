@@ -62,7 +62,7 @@ def extract_data_to_local(url, file_name, **kwargs):
                                                  
     # return {"local_file_path": local_file_path, "file_name": file_name}
 
-def upload_to_bucket(blob_name, **kwargs):
+def upload_to_bucket(**kwargs):
     print(kwargs)
     print(kwargs['ti'])
     dict_data = kwargs['ti'].xcom_pull(key="general",task_ids="extract_data_to_local_task")
@@ -71,7 +71,8 @@ def upload_to_bucket(blob_name, **kwargs):
     # print(dict_data)
 
     local_file_path = dict_data['local_file_path']
-
+    blob_name = f"earthquakes/{dict_data['file_name']}.csv.gz"
+    
     """ Upload data to a bucket"""
     storage_client = storage.Client.from_service_account_json(
         SERVICE_ACCOUNT_JSON_PATH)
@@ -164,10 +165,7 @@ local_to_gcs_task = PythonOperator(
     task_id=f"local_to_gcs_task",
     python_callable=upload_to_bucket,
     provide_context=True,
-    dag=dag,
-    op_kwargs={
-        "blob_name": f"earthquakes/{file_name}.csv.gz"
-    }
+    dag=dag
 )
 
 clear_local_files_task = BashOperator(
