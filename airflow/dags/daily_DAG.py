@@ -120,18 +120,27 @@ def create_external_table(table_name, **kwargs):
 
     file_name = dict_data['file_name']
 
-    is_exist = check_table_exists(
-        f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
-    if is_exist is None:
-        query_str = f"""
+    # is_exist = check_table_exists(
+    #     f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
+    # if is_exist is None:
+    #     query_str = f"""
+    #     CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
+    #     OPTIONS (
+    #     format = 'CSV',
+    #     uris = ['gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz']
+    #     )
+    #     """
+    #     result = execute_query(query_str)
+    
+    query_str = f"""
         CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
         OPTIONS (
         format = 'CSV',
         uris = ['gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz']
         )
         """
-        result = execute_query(query_str)
-    
+    result = execute_query(query_str)
+
     kwargs['ti'].xcom_push(key="general3", value=dict_data)
     # return ti
 
