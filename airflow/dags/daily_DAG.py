@@ -57,16 +57,15 @@ def extract_data_to_local(url, file_name, **kwargs):
     # df.to_parquet(path,index=False, compression="gzip")
     df.to_csv(local_file_path, index=False, compression="gzip")
 
-    kwargs['ti'].xcom_push(key="extract_data_to_local", value={"local_file_path": local_file_path,
+    kwargs['ti'].xcom_push(key="general", value={"local_file_path": local_file_path,
                                                  "file_name": file_name})
                                                  
-    return {"local_file_path": local_file_path, "file_name": file_name}
+    # return {"local_file_path": local_file_path, "file_name": file_name}
 
 def upload_to_bucket(blob_name, **kwargs):
     print(kwargs)
     print(kwargs['ti'])
-    xcom_data = kwargs['ti'].xcom_pull(
-        key="general", task_ids="extract_data_to_local")
+    xcom_data = kwargs['ti'].xcom_pull(task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
     print(dict_data)
@@ -109,8 +108,7 @@ def check_table_exists(table_name):
 
 
 def create_external_table(table_name, **kwargs):
-    xcom_data = kwargs['ti'].xcom_pull(
-        key="general", task_ids="extract_data_to_local")
+    xcom_data = kwargs['ti'].xcom_pull(task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
     print(dict_data)
