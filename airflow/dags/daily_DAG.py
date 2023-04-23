@@ -184,4 +184,4 @@ with DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
         }
     )
 
-    hello_operator >> extract_data_to_local_task >> local_to_gcs_task >> gcs_to_bq_external_task >> clear_local_files_task
+    extract_data_to_local_task >> local_to_gcs_task >> gcs_to_bq_external_task >> clear_local_files_task
