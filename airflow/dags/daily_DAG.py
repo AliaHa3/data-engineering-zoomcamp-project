@@ -29,7 +29,7 @@ def extract_data_to_local(ti,url, file_name, data_folder_path="."):
     # df.to_parquet(path,index=False, compression="gzip")
     df.to_csv(local_file_path, index=False, compression="gzip")
     
-    return ti
+    return {"local_file_path":local_file_path, "file_name":file_name}
 
 
 def upload_to_bucket(ti,blob_name, bucket_name=GCP_GCS_BUCKET):
@@ -50,7 +50,7 @@ def upload_to_bucket(ti,blob_name, bucket_name=GCP_GCS_BUCKET):
     blob.upload_from_filename(local_file_path)
 
     # returns a public url
-    return ti
+    # return ti
 
 
 def execute_query(query_str):
@@ -96,7 +96,7 @@ def create_external_table(ti,table_name, file_name="*"):
         )
         """
         result = execute_query(query_str)
-    return ti
+    # return ti
 
 
 def print_hello():
