@@ -62,7 +62,6 @@ def extract_data_to_local(url, file_name, data_folder_path=".", **kwargs):
 
     # return {"local_file_path": local_file_path, "file_name": file_name}
 
-
 def upload_to_bucket(blob_name, bucket_name=GCP_GCS_BUCKET, **kwargs):
     print(kwargs)
     print(kwargs['ti'])
