@@ -80,7 +80,7 @@ def upload_to_bucket(blob_name, **kwargs):
     blob = bucket.blob(blob_name)
     blob.upload_from_filename(local_file_path)
 
-    kwargs['ti'].xcom_push(key="general", value=dict_data)
+    kwargs['ti'].xcom_push(key="general2", value=dict_data)
     
     # returns a public url
     # return ti
@@ -130,7 +130,7 @@ def create_external_table(table_name, **kwargs):
         """
         result = execute_query(query_str)
     
-    kwargs['ti'].xcom_push(key="general", value=dict_data)
+    kwargs['ti'].xcom_push(key="general3", value=dict_data)
     # return ti
 
 
@@ -147,9 +147,6 @@ def print_hello():
 
 dag = DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
           start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1)
-
-hello_operator = PythonOperator(
-    task_id='hello_task', python_callable=print_hello, dag=dag)
 
 extract_data_to_local_task = PythonOperator(
     task_id=f"extract_data_to_local_task",
