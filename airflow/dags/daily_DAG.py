@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash import BashOperator
-import os
+import os,json
 
 
 GCP_PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
@@ -33,7 +33,12 @@ def extract_data_to_local(ti,url, file_name, data_folder_path="."):
 
 
 def upload_to_bucket(ti,blob_name, bucket_name=GCP_GCS_BUCKET):
-    local_file_path = ti.xcom_pull(key="general", task_ids="extract_data_to_local")['local_file_path']
+    xcom_data = ti.xcom_pull(key="general", task_ids="extract_data_to_local")
+    print(xcom_data)
+    dict_data = json.loads(xcom_data)
+    print(dict_data)
+
+    local_file_path = dict_data['local_file_path']
 
     """ Upload data to a bucket"""
     storage_client = storage.Client.from_service_account_json(
