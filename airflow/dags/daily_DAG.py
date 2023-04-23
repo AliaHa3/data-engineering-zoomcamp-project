@@ -48,10 +48,7 @@ local_file_path = f"/opt/airflow/data/{file_name}.csv.gz"
 # dag = DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
 #   start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1, user_defined_macros=MACRO_VARS)
 
-def extract_data_to_local(url, file_name, data_folder_path=".", **kwargs):
-    kwargs['ti'].xcom_push(key="general", value={"local_file_path": local_file_path,
-                                                 "file_name": file_name})
-
+def extract_data_to_local(url, file_name, **kwargs):
     df = pd.read_csv(url)
     print(df.head())
 
@@ -60,9 +57,12 @@ def extract_data_to_local(url, file_name, data_folder_path=".", **kwargs):
     # df.to_parquet(path,index=False, compression="gzip")
     df.to_csv(local_file_path, index=False, compression="gzip")
 
-    # return {"local_file_path": local_file_path, "file_name": file_name}
+    kwargs['ti'].xcom_push(key="extract_data_to_local", value={"local_file_path": local_file_path,
+                                                 "file_name": file_name})
+                                                 
+    return {"local_file_path": local_file_path, "file_name": file_name}
 
-def upload_to_bucket(blob_name, bucket_name=GCP_GCS_BUCKET, **kwargs):
+def upload_to_bucket(blob_name, **kwargs):
     print(kwargs)
     print(kwargs['ti'])
     xcom_data = kwargs['ti'].xcom_pull(
@@ -77,7 +77,7 @@ def upload_to_bucket(blob_name, bucket_name=GCP_GCS_BUCKET, **kwargs):
     storage_client = storage.Client.from_service_account_json(
         SERVICE_ACCOUNT_JSON_PATH)
 
-    bucket = storage_client.get_bucket(bucket_name)
+    bucket = storage_client.get_bucket(GCP_GCS_BUCKET)
     blob = bucket.blob(blob_name)
     blob.upload_from_filename(local_file_path)
 
@@ -108,15 +108,14 @@ def check_table_exists(table_name):
     return result
 
 
-def create_external_table(ti, table_name, file_name="*", **kwargs):
+def create_external_table(table_name, **kwargs):
     xcom_data = kwargs['ti'].xcom_pull(
         key="general", task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
     print(dict_data)
 
-    if file_name != "*":
-        file_name = dict_data['file_name']
+    file_name = dict_data['file_name']
 
     is_exist = check_table_exists(
         f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
@@ -182,8 +181,7 @@ gcs_to_bq_external_task = PythonOperator(
     provide_context=True,
     dag=dag,
     op_kwargs={
-        "table_name": f"{external_table_name}",
-        "file_name": "file_name"
+        "table_name": f"{external_table_name}"
     }
 )
 
