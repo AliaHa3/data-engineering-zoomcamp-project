@@ -170,7 +170,7 @@ local_to_gcs_task = PythonOperator(
 
 clear_local_files_task = BashOperator(
     task_id=f"clear_local_files_task",
-    bash_command=f'rm { ti.xcom_pull(key="general3",task_ids="gcs_to_bq_external_task")["local_file_path"]}',
+    bash_command=f'rm {{ ti.xcom_pull(key="general3",task_ids="gcs_to_bq_external_task")["local_file_path"] }}',
     dag=dag
 )
 
