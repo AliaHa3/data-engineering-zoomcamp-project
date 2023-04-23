@@ -29,10 +29,11 @@ def extract_data_to_local(ti,url, file_name, data_folder_path="."):
     # df.to_parquet(path,index=False, compression="gzip")
     df.to_csv(local_file_path, index=False, compression="gzip")
     
-    return local_file_path
+    return ti
 
 
 def upload_to_bucket(ti,blob_name, bucket_name=GCP_GCS_BUCKET):
+    print(ti)
     xcom_data = ti.xcom_pull(key="general", task_ids="extract_data_to_local")
     print(xcom_data)
     dict_data = json.loads(xcom_data)
@@ -49,7 +50,7 @@ def upload_to_bucket(ti,blob_name, bucket_name=GCP_GCS_BUCKET):
     blob.upload_from_filename(local_file_path)
 
     # returns a public url
-    return blob.public_url
+    return ti
 
 
 def execute_query(query_str):
@@ -76,8 +77,13 @@ def check_table_exists(table_name):
 
 
 def create_external_table(ti,table_name, file_name="*"):
+    xcom_data = ti.xcom_pull(key="general", task_ids="extract_data_to_local")
+    print(xcom_data)
+    dict_data = json.loads(xcom_data)
+    print(dict_data)
+
     if file_name != "*":
-        file_name = ti.xcom_pull(key="general", task_ids="extract_data_to_local")['file_name']
+        file_name = dict_data['file_name']
 
     is_exist = check_table_exists(
         f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
@@ -90,7 +96,7 @@ def create_external_table(ti,table_name, file_name="*"):
         )
         """
         result = execute_query(query_str)
-    return result
+    return ti
 
 
 def print_hello():
@@ -147,6 +153,7 @@ with DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
     extract_data_to_local_task = PythonOperator(
         task_id=f"extract_data_to_local_task",
         python_callable=extract_data_to_local,
+        provide_context = True,
         op_kwargs={
             "url": dataset_url,
             "file_name": file_name
@@ -156,6 +163,7 @@ with DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
     local_to_gcs_task = PythonOperator(
         task_id=f"local_to_gcs_task",
         python_callable=upload_to_bucket,
+        provide_context = True,
         op_kwargs={
             "blob_name": f"earthquakes/{file_name}.csv.gz"
         }
@@ -163,12 +171,14 @@ with DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
 
     clear_local_files_task = BashOperator(
         task_id=f"clear_local_files_task",
+        provide_context = True,
         bash_command=f"rm {local_file_path}"
     )
 
     gcs_to_bq_external_task = PythonOperator(
         task_id=f"gcs_to_bq_external_task",
         python_callable=create_external_table,
+        provide_context = True,
         op_kwargs={
             "table_name": f"{external_table_name}",
             "file_name": "file_name"
