@@ -80,7 +80,7 @@ def upload_to_bucket(blob_name, **kwargs):
     blob = bucket.blob(blob_name)
     blob.upload_from_filename(local_file_path)
 
-    kwargs['ti'].xcom_push(key="general2", value=dict_data)
+    kwargs['ti'].xcom_push(task_ids="local_to_gcs_task",key="general2", value=dict_data)
     
     # returns a public url
     # return ti
@@ -110,8 +110,9 @@ def check_table_exists(table_name):
 
 
 def create_external_table(table_name, **kwargs):
+    print(kwargs)
     print(kwargs['ti'])
-    dict_data = kwargs['ti'].xcom_pull(task_ids="local_to_gcs_task")
+    dict_data = kwargs['ti'].xcom_pull(key="general2",task_ids="local_to_gcs_task")
     print(dict_data)
     # dict_data = json.loads(xcom_data)
     # print(dict_data)
@@ -130,7 +131,7 @@ def create_external_table(table_name, **kwargs):
         """
         result = execute_query(query_str)
     
-    kwargs['ti'].xcom_push(key="general3", value=dict_data)
+    kwargs['ti'].xcom_push(key="general3", value=dict_data,task_ids="gcs_to_bq_external_task")
     # return ti
 
 
