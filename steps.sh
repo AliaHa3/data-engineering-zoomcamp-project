@@ -19,3 +19,7 @@ docker-compose down --volumes --remove-orphans
 
 docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "ls /opt/spark/python/lib"
 docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "python /opt/airflow/dags/spark_job.py"
+
+docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "ls /opt/airflow/lib"
+
+docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "gsutil cp gs://hadoop-lib/gcs/gcs-connector-hadoop3-2.2.5.jar ./lib/gcs-connector-hadoop3-2.2.5.jar"
