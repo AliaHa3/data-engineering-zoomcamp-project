@@ -8,17 +8,17 @@ import os
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 
 
-parser = argparse.ArgumentParser()
+# parser = argparse.ArgumentParser()
 
-parser.add_argument('--input_file', required=True,default="")
-parser.add_argument('--output_file', required=True,default="")
-parser.add_argument('--output_table', required=True,default="")
+# parser.add_argument('--input_file', required=True,default="")
+# parser.add_argument('--output_file', required=True,default="")
+# parser.add_argument('--output_table', required=True,default="")
 
-args = parser.parse_args()
+# args = parser.parse_args()
 
-input_file = args.input_file
-output_file = args.output_file
-output_table = args.output_table
+# input_file = args.input_file
+# output_file = args.output_file
+# output_table = args.output_table
 
 spark = SparkSession.builder.master("local[*]").appName("test").getOrCreate()
 print(spark.version)
