@@ -53,6 +53,25 @@ resource "google_storage_bucket" "data-lake-bucket" {
   }
 }
 
+resource "google_storage_bucket" "data-lake-tmp-bucket" {
+  name          = "${local.data_lake_bucket}_tmp_${var.project}" # Concatenating DL bucket & Project name for unique naming
+  location      = var.region
+  force_destroy = true
+  storage_class = var.storage_class
+
+  uniform_bucket_level_access = true
+
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 30 # days
+    }
+  }
+}
+
+
 resource "google_bigquery_dataset" "stg_dataset" {
   dataset_id                 = var.stg_bq_dataset
   project                    = var.project
