@@ -13,8 +13,42 @@ geolocator = Nominatim(user_agent="geoapiEnrichment")
 reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
 
 full_columns = [
-    "time", "latitude", "longitude", "depth", "mag", "magType", "nst", "gap", "dmin", "rms", "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError", "magNst", "status", "locationSource", "magSource", "city", "state", "country", "country_code", "zipcode"
+    "time", "latitude", "longitude", "depth", "mag", "magType", "nst", "gap", "dmin", "rms",
+    "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError",
+    "magNst", "status", "locationSource", "magSource", "city", "state", "country", "country_code", "zipcode"
 ]
+
+schema = types.StructType(
+    [
+        types.StructField("time", types.TimestampType(), True),
+        types.StructField("latitude", types.FloatType(), True),
+        types.StructField("longitude", types.FloatType(), True),
+        types.StructField("depth", types.FloatType(), True),
+        types.StructField("mag", types.FloatType(), True),
+        types.StructField("magType", types.StringType(), True),
+        types.StructField("nst", types.FloatType(), True),
+        types.StructField("gap", types.FloatType(), True),
+        types.StructField("dmin", types.FloatType(), True),
+        types.StructField("rms", types.FloatType(), True),
+        types.StructField("net", types.StringType(), True),
+        types.StructField("id", types.StringType(), True),
+        types.StructField("updated", types.TimestampType(), True),
+        types.StructField("place", types.StringType(), True),
+        types.StructField("type", types.StringType(), True),
+        types.StructField("horizontalError", types.FloatType(), True),
+        types.StructField("depthError", types.FloatType(), True),
+        types.StructField("magError", types.FloatType(), True),
+        types.StructField("magNst", types.FloatType(), True),
+         types.StructField("status", types.StringType(), True),
+        types.StructField("locationSource", types.StringType(), True),
+        types.StructField("magSource", types.StringType(), True),
+        types.StructField("city", types.StringType(), True),
+        types.StructField("state", types.StringType(), True),
+        types.StructField("country", types.StringType(), True),
+        types.StructField("country_code", types.StringType(), True),
+        types.StructField("zipcode", types.StringType(), True)
+    ]
+)
 
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
@@ -82,9 +116,12 @@ path = "gs://earthquakes_data_lake_dezoomcamp-375819/earthquakes/data_20230424T0
 df = spark.read.csv(path, header=True)
 df.show()
 
-new_df = df.rdd.map(lambda row: country_enrichment(row))
+enrich_rdd = df.rdd.map(lambda row: country_enrichment(row))
 # new_df.collect()
-new_df = new_df.toDF(full_columns)
+# new_df = new_df.toDF(full_columns)
+
+
+new_df = spark.createDataFrame(enrich_rdd, schema=schema)
 new_df.printSchema()
 new_df.show()
 
