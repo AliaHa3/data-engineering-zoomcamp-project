@@ -12,13 +12,10 @@ from geopy.extra.rate_limiter import RateLimiter
 geolocator = Nominatim(user_agent="geoapiEnrichment")
 reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
 
-orginal_columns = [
-    "time", "latitude", "longitude", "depth", "mag", "magType", "nst", "gap", "dmin", "rms", "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError", "magNst", "status", "locationSource", "magSource"
+full_columns = [
+    "time", "latitude", "longitude", "depth", "mag", "magType", "nst", "gap", "dmin", "rms", "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError", "magNst", "status", "locationSource", "magSource", "city", "state", "country", "country_code", "zipcode"
 ]
 
-enrichment_columns = [
-    "city", "state", "country", "country_code", "zipcode"
-]
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
@@ -87,7 +84,8 @@ df.show()
 
 new_df = df.rdd.map(lambda row: country_enrichment(row))
 # new_df.collect()
-new_df.toDF(orginal_columns.extend(enrichment_columns)).show()
+new_df = new_df.toDF(",".join(full_columns))
+new_df.show()
 
 # df.write.format('bigquery') \
 #     .option('table', 'earthquake_prod.tmptable2') \
