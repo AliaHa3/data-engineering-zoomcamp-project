@@ -23,3 +23,5 @@ docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "python /opt/
 docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "ls /opt/airflow/lib"
 
 docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "gsutil cp gs://hadoop-lib/gcs/gcs-connector-hadoop3-2.2.5.jar ./lib/gcs-connector-hadoop3-2.2.5.jar"
+
+docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "gsutil cp gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar ./lib/spark-bigquery-latest_2.12.jar"

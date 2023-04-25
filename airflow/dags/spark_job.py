@@ -56,7 +56,7 @@ tmp_bucket = "dtc_data_lake_dezoomcamp-375819"
 conf = SparkConf() \
     .setMaster('local[*]') \
     .setAppName('test') \
-    .set("spark.jars", f"{SPARK_GCS_JAR},{SPARK_BQ_JAR}" \
+    .set("spark.jars", f"{SPARK_GCS_JAR},{SPARK_BQ_JAR}") \
     .set("spark.hadoop.google.cloud.auth.service.account.enable", "true") \
     .set("spark.hadoop.google.cloud.auth.service.account.json.keyfile", SERVICE_ACCOUNT_JSON_PATH) \
     .set('temporaryGcsBucket', tmp_bucket)
