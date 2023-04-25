@@ -90,5 +90,5 @@ new_df.show()
 
 new_df.write.format('bigquery') \
     .option('table', 'earthquake_prod.tmptable2') \
-    .mode('overright') \
+    .mode('overwrite') \
     .save()
