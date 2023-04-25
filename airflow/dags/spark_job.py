@@ -81,7 +81,7 @@ df.show()
 # new_df.show()
 
 df.write.format('bigquery') \
-    .option('table', 'earthquake_prod.tmptable') \
-    .mode('overwrite') \
+    .option('table', 'earthquake_prod.tmptable2') \
+    .mode('append') \
     .save()
 
