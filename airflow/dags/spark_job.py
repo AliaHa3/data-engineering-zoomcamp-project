@@ -2,6 +2,7 @@ import pyspark
 from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
+from pyspark.sql import types
 import argparse
 import os
 
