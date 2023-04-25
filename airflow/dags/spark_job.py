@@ -79,7 +79,7 @@ df=spark.read.csv(path, header=True)
 df.show()
 
 new_df = df.rdd.map(lambda row: country_enrichment(row))
-new_df.show()
+new_df.toDF.show()
 
 # df.write.format('bigquery') \
 #     .option('table', 'earthquake_prod.tmptable2') \
