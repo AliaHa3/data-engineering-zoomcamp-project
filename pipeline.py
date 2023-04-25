@@ -34,64 +34,64 @@ from pathlib import Path
 from google.cloud import storage, bigquery
 from google.cloud.exceptions import NotFound
 import datetime
-from config import GCP_GCS_BUCKET,SERVICE_ACCOUNT_JSON_PATH,GCP_PROJECT_ID,BQ_DATASET_STAGING,BQ_DATASET_PROD,GCS_ID
+# from config import GCP_GCS_BUCKET,SERVICE_ACCOUNT_JSON_PATH,GCP_PROJECT_ID,BQ_DATASET_STAGING,BQ_DATASET_PROD,GCS_ID
 
 
-def extract_data_to_local(url,file_name,data_folder_path="data"):
-    df = pd.read_csv(url)
-    print(df.head())
+# def extract_data_to_local(url,file_name,data_folder_path="data"):
+#     df = pd.read_csv(url)
+#     print(df.head())
 
-    local_file_path = f"{data_folder_path}/{file_name}.csv.gz"
+#     local_file_path = f"{data_folder_path}/{file_name}.csv.gz"
 
-    # df.to_parquet(path,index=False, compression="gzip")
-    df.to_csv(local_file_path,index=False,compression="gzip")
+#     # df.to_parquet(path,index=False, compression="gzip")
+#     df.to_csv(local_file_path,index=False,compression="gzip")
 
-    return local_file_path
+#     return local_file_path
 
 
-def upload_to_bucket(blob_name, path_to_file, bucket_name=GCP_GCS_BUCKET):
-    """ Upload data to a bucket"""
-    storage_client = storage.Client.from_service_account_json(SERVICE_ACCOUNT_JSON_PATH)
+# def upload_to_bucket(blob_name, path_to_file, bucket_name=GCP_GCS_BUCKET):
+#     """ Upload data to a bucket"""
+#     storage_client = storage.Client.from_service_account_json(SERVICE_ACCOUNT_JSON_PATH)
 
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(blob_name)
-    blob.upload_from_filename(path_to_file)
+#     bucket = storage_client.get_bucket(bucket_name)
+#     blob = bucket.blob(blob_name)
+#     blob.upload_from_filename(path_to_file)
     
-    #returns a public url
-    return blob.public_url
+#     #returns a public url
+#     return blob.public_url
 
-def execute_query(query_str):
-    """ create table in BigQuery"""
-    bigquery_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_JSON_PATH)
-    query_job = bigquery_client.query(query_str)
+# def execute_query(query_str):
+#     """ create table in BigQuery"""
+#     bigquery_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_JSON_PATH)
+#     query_job = bigquery_client.query(query_str)
 
-    results = query_job.result()  # Waits for job to complete
-    print (results)
-    return results
+#     results = query_job.result()  # Waits for job to complete
+#     print (results)
+#     return results
 
-def check_table_exists(table_name):
-    """ check if table exists in BigQuery"""
-    try:
-        bigquery_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_JSON_PATH)
-        result = bigquery_client.get_table(table_name)
-    except NotFound:
-        print(f" Table {table_name} is not found")
-        result = None
-    return result
+# def check_table_exists(table_name):
+#     """ check if table exists in BigQuery"""
+#     try:
+#         bigquery_client = bigquery.Client.from_service_account_json(SERVICE_ACCOUNT_JSON_PATH)
+#         result = bigquery_client.get_table(table_name)
+#     except NotFound:
+#         print(f" Table {table_name} is not found")
+#         result = None
+#     return result
 
 
-def create_external_table(table_name):
-    is_exist = check_table_exists(f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
-    if is_exist is None:
-        query_str = f"""
-        CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
-        OPTIONS (
-        format = 'CSV',
-        uris = ['gs://{GCS_ID}/earthquakes/*.csv.gz']
-        )
-        """
-        result = execute_query(query_str)
-    return result
+# def create_external_table(table_name):
+#     is_exist = check_table_exists(f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
+#     if is_exist is None:
+#         query_str = f"""
+#         CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
+#         OPTIONS (
+#         format = 'CSV',
+#         uris = ['gs://{GCS_ID}/earthquakes/*.csv.gz']
+#         )
+#         """
+#         result = execute_query(query_str)
+#     return result
 
 
 # table_name = 'earthquakes_bronze'
@@ -134,3 +134,53 @@ def create_external_table(table_name):
 #             upload_to_bucket(f"earthquakes/{file_name}.csv.gz", local_file_path)
 #         except Exception as e:
 #             print(str(e))
+
+
+from geopy.geocoders import Nominatim
+from geopy.point import Point
+from geopy.extra.rate_limiter import RateLimiter
+
+geolocator = Nominatim(user_agent="geoapiEnrichment")
+reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
+
+def country_enrichment(row):
+    # location = geolocator.reverse(Point(row['latitude'],row['longitude']))
+    location = reverse(Point(row['latitude'],row['longitude']))
+    address = {}
+    if location is not None:
+        address = location.raw['address']
+
+    city = address.get('city', '')
+    state = address.get('state', '')
+    country = address.get('country', '')
+    country_code = address.get('country_code', '')
+    zipcode = address.get('postcode', '')
+
+    row['city'] = city
+    row['state'] = state
+    row['country'] = country
+    row['country_code'] = country_code
+    row['zipcode'] = zipcode
+
+    return row
+
+df = pd.read_csv('data\data_20140101T161728_20140101T181728_20230326012042.csv.gz', compression='gzip', header=0)
+print(df.head())
+
+
+new_df = df.apply(country_enrichment, axis=1)
+print(new_df.head())
+new_df.to_csv('t.csv',index=False) #,compression="gzip"
+
+# for i,row in df.iterrows():
+#     print(row)
+#     latitude = "25.594095"
+#     longitude = "85.137566"
+#     print(Point(row['latitude'],row['longitude']))
+    
+
+#     if i==10:
+#         break
+
+
+

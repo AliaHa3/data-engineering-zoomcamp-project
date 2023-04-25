@@ -5,8 +5,38 @@ from pyspark.context import SparkContext
 import argparse
 import os
 
+from geopy.geocoders import Nominatim
+from geopy.point import Point
+from geopy.extra.rate_limiter import RateLimiter
+
+geolocator = Nominatim(user_agent="geoapiEnrichment")
+reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
+
+
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
+
+def country_enrichment(row):
+    # location = geolocator.reverse(Point(row['latitude'],row['longitude']))
+    location = reverse(Point(row['latitude'],row['longitude']))
+    address = {}
+    if location is not None:
+        address = location.raw['address']
+
+    city = address.get('city', '')
+    state = address.get('state', '')
+    country = address.get('country', '')
+    country_code = address.get('country_code', '')
+    zipcode = address.get('postcode', '')
+
+    row['city'] = city
+    row['state'] = state
+    row['country'] = country
+    row['country_code'] = country_code
+    row['zipcode'] = zipcode
+
+    return row
+
 
 # parser = argparse.ArgumentParser()
 
@@ -43,3 +73,8 @@ spark = SparkSession.builder \
 path = "gs://earthquakes_data_lake_dezoomcamp-375819/earthquakes/data_20230424T090501_20230424T100501_20230424100501.csv.gz"
 df=spark.read.csv(path, header=True)
 df.show()
+
+new_df = df.apply(country_enrichment, axis=1)
+new_df.show()
+
+
