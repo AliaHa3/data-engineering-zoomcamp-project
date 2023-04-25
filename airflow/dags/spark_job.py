@@ -18,6 +18,7 @@ SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
 
 def country_enrichment(row):
+    print("inside")
     # location = geolocator.reverse(Point(row['latitude'],row['longitude']))
     location = reverse(Point(row['latitude'],row['longitude']))
     address = {}
@@ -37,7 +38,7 @@ def country_enrichment(row):
     row['zipcode'] = zipcode
 
     print(row)
-    return row
+    return (city,state,country,country_code,zipcode)
 
 
 # parser = argparse.ArgumentParser()
