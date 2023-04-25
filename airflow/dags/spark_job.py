@@ -77,7 +77,11 @@ path = "gs://earthquakes_data_lake_dezoomcamp-375819/earthquakes/data_20230424T0
 df=spark.read.csv(path, header=True)
 df.show()
 
-new_df = df.apply(country_enrichment, axis=1)
-new_df.show()
+# new_df = df.apply(country_enrichment, axis=1)
+# new_df.show()
 
+df.write.format('bigquery') \
+    .option('table', 'earthquake_prod.tmptable') \
+    .mode('overwrite') \
+    .save()
 
