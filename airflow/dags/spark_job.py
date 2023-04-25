@@ -84,10 +84,11 @@ df.show()
 
 new_df = df.rdd.map(lambda row: country_enrichment(row))
 # new_df.collect()
-new_df = new_df.toDF(",".join(full_columns))
+new_df = new_df.toDF(full_columns)
+new_df.printSchema()
 new_df.show()
 
-# df.write.format('bigquery') \
-#     .option('table', 'earthquake_prod.tmptable2') \
-#     .mode('append') \
-#     .save()
+new_df.write.format('bigquery') \
+    .option('table', 'earthquake_prod.tmptable2') \
+    .mode('overright') \
+    .save()
