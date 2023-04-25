@@ -33,13 +33,13 @@ def country_enrichment(row):
     country_code = address.get('country_code', '')
     zipcode = address.get('postcode', '')
 
-    row['city'] = city
-    row['state'] = state
-    row['country'] = country
-    row['country_code'] = country_code
-    row['zipcode'] = zipcode
+    # row['city'] = city
+    # row['state'] = state
+    # row['country'] = country
+    # row['country_code'] = country_code
+    # row['zipcode'] = zipcode
 
-    print(row)
+    # print(row)
     return (city,state,country,country_code,zipcode)
 
 
@@ -82,8 +82,8 @@ df=spark.read.csv(path, header=True)
 df.show()
 
 new_df = df.rdd.map(lambda row: country_enrichment(row))
-new_df.collect()
-# new_df.toDF().show()
+# new_df.collect()
+new_df.toDF().show()
 
 # df.write.format('bigquery') \
 #     .option('table', 'earthquake_prod.tmptable2') \
