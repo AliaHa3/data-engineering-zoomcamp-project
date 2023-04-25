@@ -12,17 +12,24 @@ from geopy.extra.rate_limiter import RateLimiter
 geolocator = Nominatim(user_agent="geoapiEnrichment")
 reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
 
+orginal_columns = [
+    "time", "latitude", "longitude", "depth", "mag", "magType", "nst", "gap", "dmin", "rms", "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError", "magNst", "status", "locationSource", "magSource"
+]
 
+enrichment_columns = [
+    "city", "state", "country", "country_code", "zipcode"
+]
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
+
 
 def country_enrichment(row):
     geolocator = Nominatim(user_agent="geoapiEnrichment")
     reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
     print("inside")
     # location = geolocator.reverse(Point(row['latitude'],row['longitude']))
-    location = reverse(Point(row['latitude'],row['longitude']))
+    location = reverse(Point(row['latitude'], row['longitude']))
     address = {}
     if location is not None:
         address = location.raw['address']
@@ -33,14 +40,8 @@ def country_enrichment(row):
     country_code = address.get('country_code', '')
     zipcode = address.get('postcode', '')
 
-    # row['city'] = city
-    # row['state'] = state
-    # row['country'] = country
-    # row['country_code'] = country_code
-    # row['zipcode'] = zipcode
-
-    # print(row)
-    return (city,state,country,country_code,zipcode)
+    return (
+        row["time"], row["latitude"], row["longitude"], row["depth"], row["mag"], row["magType"], row["nst"], row["gap"], row["dmin"], row["rms"], row["net"], row["id"], row["updated"], row["place"], row["type"], row["horizontalError"], row["depthError"], row["magError"], row["magNst"], row["status"], row["locationSource"], row["magSource"], city, state, country, country_code, zipcode)
 
 
 # parser = argparse.ArgumentParser()
@@ -68,9 +69,12 @@ conf = SparkConf() \
 sc = SparkContext(conf=conf)
 
 hadoop_conf = sc._jsc.hadoopConfiguration()
-hadoop_conf.set("fs.AbstractFileSystem.gs.impl",  "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
-hadoop_conf.set("fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
-hadoop_conf.set("fs.gs.auth.service.account.json.keyfile", SERVICE_ACCOUNT_JSON_PATH)
+hadoop_conf.set("fs.AbstractFileSystem.gs.impl",
+                "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
+hadoop_conf.set(
+    "fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
+hadoop_conf.set("fs.gs.auth.service.account.json.keyfile",
+                SERVICE_ACCOUNT_JSON_PATH)
 hadoop_conf.set("fs.gs.auth.service.account.enable", "true")
 
 spark = SparkSession.builder \
@@ -78,15 +82,14 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 path = "gs://earthquakes_data_lake_dezoomcamp-375819/earthquakes/data_20230424T090501_20230424T100501_20230424100501.csv.gz"
-df=spark.read.csv(path, header=True)
+df = spark.read.csv(path, header=True)
 df.show()
 
 new_df = df.rdd.map(lambda row: country_enrichment(row))
 # new_df.collect()
-new_df.toDF().show()
+new_df.toDF(orginal_columns.extend(enrichment_columns)).show()
 
 # df.write.format('bigquery') \
 #     .option('table', 'earthquake_prod.tmptable2') \
 #     .mode('append') \
 #     .save()
-
