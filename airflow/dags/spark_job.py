@@ -18,8 +18,34 @@ full_columns = [
     "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError",
     "magNst", "status", "locationSource", "magSource", "city", "state", "country", "country_code", "zipcode"
 ]
-
 schema = types.StructType(
+    [
+        types.StructField("time", types.TimestampType(), True),
+        types.StructField("latitude", types.FloatType(), True),
+        types.StructField("longitude", types.FloatType(), True),
+        types.StructField("depth", types.FloatType(), True),
+        types.StructField("mag", types.FloatType(), True),
+        types.StructField("magType", types.StringType(), True),
+        types.StructField("nst", types.FloatType(), True),
+        types.StructField("gap", types.FloatType(), True),
+        types.StructField("dmin", types.FloatType(), True),
+        types.StructField("rms", types.FloatType(), True),
+        types.StructField("net", types.StringType(), True),
+        types.StructField("id", types.StringType(), True),
+        types.StructField("updated", types.TimestampType(), True),
+        types.StructField("place", types.StringType(), True),
+        types.StructField("type", types.StringType(), True),
+        types.StructField("horizontalError", types.FloatType(), True),
+        types.StructField("depthError", types.FloatType(), True),
+        types.StructField("magError", types.FloatType(), True),
+        types.StructField("magNst", types.FloatType(), True),
+         types.StructField("status", types.StringType(), True),
+        types.StructField("locationSource", types.StringType(), True),
+        types.StructField("magSource", types.StringType(), True)
+    ]
+)
+
+enrich_schema = types.StructType(
     [
         types.StructField("time", types.TimestampType(), True),
         types.StructField("latitude", types.FloatType(), True),
@@ -114,15 +140,21 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 path = "gs://earthquakes_data_lake_dezoomcamp-375819/earthquakes/data_20230424T090501_20230424T100501_20230424100501.csv.gz"
-df = spark.read.csv(path, header=True)
+df = (
+    spark.read.option("header", "true").schema(schema).csv(path)
+)
 df.show()
+df.printSchema()
+
+# df = spark.read.csv(path, header=True)
+# df.show()
 
 enrich_rdd = df.rdd.map(lambda row: country_enrichment(row))
 # new_df.collect()
 # new_df = new_df.toDF(full_columns)
 
 
-new_df = spark.createDataFrame(enrich_rdd, schema=schema)
+new_df = spark.createDataFrame(enrich_rdd, schema=enrich_schema)
 new_df.printSchema()
 new_df.show()
 
