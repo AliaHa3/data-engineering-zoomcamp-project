@@ -18,6 +18,8 @@ SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
 
 def country_enrichment(row):
+    geolocator = Nominatim(user_agent="geoapiEnrichment")
+    reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
     print("inside")
     # location = geolocator.reverse(Point(row['latitude'],row['longitude']))
     location = reverse(Point(row['latitude'],row['longitude']))
