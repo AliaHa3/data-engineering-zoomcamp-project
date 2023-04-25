@@ -12,6 +12,8 @@ import json
 GCP_PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 GCP_GCS_BUCKET = os.environ.get('GCP_GCS_BUCKET')
 BQ_DATASET_STAGING = os.environ.get('BIGQUERY_DATASET', 'earthquake_stg')
+BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
+
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 external_table_name = 'daily_staging'
 
@@ -141,6 +143,7 @@ def create_external_table(table_name, **kwargs):
         )
         """
     result = execute_query(query_str)
+    dict_data["bucket_file_path"] = f"gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz"
 
     kwargs['ti'].xcom_push(key="general3", value=dict_data)
     # return ti
@@ -178,6 +181,12 @@ local_to_gcs_task = PythonOperator(
     dag=dag
 )
 
+spark_transformation_task = BashOperator(
+    task_id=f"spark_transformation_task",
+    bash_command="python /opt/airflow/dags/spark_job.py --input_file '{{ ti.xcom_pull(key='general3',task_ids='gcs_to_bq_external_task')['bucket_file_path']}}' ",
+    dag=dag
+)
+
 clear_local_files_task = BashOperator(
     task_id=f"clear_local_files_task",
     bash_command="rm {{ ti.xcom_pull(key='general3',task_ids='gcs_to_bq_external_task')['local_file_path'] }}",
@@ -194,4 +203,4 @@ gcs_to_bq_external_task = PythonOperator(
     }
 )
 
-extract_data_to_local_task >> local_to_gcs_task >> gcs_to_bq_external_task >> clear_local_files_task
+extract_data_to_local_task >> local_to_gcs_task >> gcs_to_bq_external_task >> spark_transformation_task >> clear_local_files_task
