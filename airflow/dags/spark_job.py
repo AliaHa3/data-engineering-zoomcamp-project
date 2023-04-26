@@ -12,7 +12,7 @@ from geopy.extra.rate_limiter import RateLimiter
 
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
-production_table_name = 'full_data'
+production_table_name = 'full_data2'
 
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
@@ -79,11 +79,11 @@ enrich_schema = types.StructType(
          types.StructField("status", types.StringType(), True),
         types.StructField("locationSource", types.StringType(), True),
         types.StructField("magSource", types.StringType(), True),
-        types.StructField("city", types.StringType(), True),
-        types.StructField("state", types.StringType(), True),
-        types.StructField("country", types.StringType(), True),
-        types.StructField("country_code", types.StringType(), True),
-        types.StructField("zipcode", types.StringType(), True)
+        types.StructField("city", types.StringType(), True)
+        # types.StructField("state", types.StringType(), True),
+        # types.StructField("country", types.StringType(), True),
+        # types.StructField("country_code", types.StringType(), True),
+        # types.StructField("zipcode", types.StringType(), True)
     ]
 )
 
@@ -108,15 +108,27 @@ def country_enrichment(row):
         row["time"], row["latitude"], row["longitude"], row["depth"], row["mag"], row["magType"], row["nst"], row["gap"], row["dmin"], row["rms"], row["net"], row["id"], row["updated"], row["place"], row["type"], row["horizontalError"], row["depthError"], row["magError"], row["magNst"], row["status"], row["locationSource"], row["magSource"], city, state, country, country_code, zipcode)
 
 
+def country_enrichment_string_func(row):
+    print("inside")
+    city = row["place"]
+    if ',' in row["place"]:
+        city = row["place"].split(',')[-1].strip()
+    
+    return (
+        row["time"], row["latitude"], row["longitude"], row["depth"], row["mag"], row["magType"], row["nst"], row["gap"], row["dmin"], row["rms"], row["net"], row["id"], row["updated"], row["place"], row["type"], row["horizontalError"], row["depthError"], row["magError"], row["magNst"], row["status"], row["locationSource"], row["magSource"], city)
+
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument('--input_file', required=True)
+# parser.add_argument('--country_enrichment_string', default='False')
 # parser.add_argument('--output_file', required=True)
 # parser.add_argument('--output_table', required=True)
 
 args = parser.parse_args()
 
 input_file = args.input_file
+# country_enrichment_string = True if args.country_enrichment_string == 'True' else False
 # output_file = args.output_file
 # output_table = args.output_table
 
@@ -151,7 +163,7 @@ df = (
 df.show()
 df.printSchema()
 
-enrich_rdd = df.rdd.map(lambda row: country_enrichment(row))
+enrich_rdd = df.rdd.map(lambda row: country_enrichment_string_func(row))
 
 new_df = spark.createDataFrame(enrich_rdd, schema=enrich_schema)
 new_df.printSchema()

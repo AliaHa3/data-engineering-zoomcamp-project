@@ -25,3 +25,31 @@ docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "ls /opt/airf
 docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "gsutil cp gs://hadoop-lib/gcs/gcs-connector-hadoop3-2.2.5.jar ./lib/gcs-connector-hadoop3-2.2.5.jar"
 
 docker exec -it --user airflow airflow-airflow-scheduler-1 bash -c "gsutil cp gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar ./lib/spark-bigquery-latest_2.12.jar"
+
+
+
+select 
+date_trunc(time, year) as _year, 
+date_trunc(time, month) as _month, 
+date_trunc(time, day) as _day,
+count(*) earthquakes_total_count, 
+max(depth) max_depth,
+max(mag) max_mag,
+avg(depth) avg_depth,
+avg(mag) avg_mag,
+from `dezoomcamp-375819.earthquake_prod.full_data`
+group by 1,2,3;
+
+select 
+country,
+state,
+date_trunc(time, year) as _year, 
+date_trunc(time, month) as _month, 
+date_trunc(time, day) as _day,
+count(*) earthquakes_total_count, 
+max(depth) max_depth,
+max(mag) max_mag,
+avg(depth) avg_depth,
+avg(mag) avg_mag,
+from `dezoomcamp-375819.earthquake_prod.full_data`
+group by 1,2,3,4,5;
