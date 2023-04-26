@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash import BashOperator
+from dateutil.relativedelta import relativedelta
 import os
 import json
 
@@ -30,7 +31,7 @@ currentDay = current_date.day
 currentMonth = current_date.month
 currentYear = current_date.year
 
-past_date = datetime.now() - timedelta(year=1)
+past_date = datetime.now() - relativedelta(months=12)
 pastSecond = past_date.second
 pastMinute = past_date.minute
 pastHour = past_date.hour
