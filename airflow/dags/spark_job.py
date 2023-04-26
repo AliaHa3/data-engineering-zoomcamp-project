@@ -12,7 +12,7 @@ from geopy.extra.rate_limiter import RateLimiter
 
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
-production_table_name = 'full_data2'
+production_table_name = 'full_data'
 
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
