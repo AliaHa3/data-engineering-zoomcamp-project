@@ -178,11 +178,11 @@ spark_transformation_task = BashOperator(
     dag=dag
 )
 
-clear_local_files_task = BashOperator(
-    task_id=f"clear_local_files_task",
-    bash_command="rm {{ ti.xcom_pull(key='general3',task_ids='gcs_to_bq_external_task')['local_file_path'] }}",
-    dag=dag
-)
+# clear_local_files_task = BashOperator(
+#     task_id=f"clear_local_files_task",
+#     bash_command="rm {{ ti.xcom_pull(key='general3',task_ids='gcs_to_bq_external_task')['local_file_path'] }}",
+#     dag=dag
+# )
 
 gcs_to_bq_external_task = PythonOperator(
     task_id=f"gcs_to_bq_external_task",
