@@ -31,13 +31,13 @@ currentDay = current_date.day
 currentMonth = current_date.month
 currentYear = current_date.year
 
-past_date = datetime.now() - relativedelta(months=12)
+past_date = datetime.now() - timedelta(hour=1)
 pastSecond = past_date.second
 pastMinute = past_date.minute
 pastHour = past_date.hour
 pastDay = past_date.day
 pastMonth = past_date.month
-pastYear = past_date.year
+pastYear = past_date.year - 1
 
 starttime = f"{pastYear}-{pastMonth:02}-{pastDay:02}T{pastHour:02}:{pastMinute:02}:{pastSecond:02}"
 endtime = f"{currentYear}-{currentMonth:02}-{currentDay:02}T{currentHour:02}:{currentMinute:02}:{currentSecond:02}"
