@@ -47,9 +47,6 @@ dataset_url = f"https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv&star
 local_file_path = f"/opt/airflow/data/{file_name}.csv.gz"
 
 
-# dag = DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',
-#   start_date=datetime(2023, 4, 22), catchup=False, max_active_runs=1, user_defined_macros=MACRO_VARS)
-
 def extract_data_to_local(url, file_name, **kwargs):
     # print(url)
     df = pd.read_csv(url)
