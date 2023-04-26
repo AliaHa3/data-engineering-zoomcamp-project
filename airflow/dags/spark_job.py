@@ -110,10 +110,12 @@ def country_enrichment(row):
 
 def country_enrichment_string_func(row):
     print("inside")
-    city = row["place"]
-    if ',' in row["place"]:
-        city = row["place"].split(',')[-1].strip()
-    
+    city = None
+    if row is not None and row["place"] is not None:
+        city = row["place"]
+        if ',' in row["place"]:
+            city = row["place"].split(',')[-1].strip()
+        
     return (
         row["time"], row["latitude"], row["longitude"], row["depth"], row["mag"], row["magType"], row["nst"], row["gap"], row["dmin"], row["rms"], row["net"], row["id"], row["updated"], row["place"], row["type"], row["horizontalError"], row["depthError"], row["magError"], row["magNst"], row["status"], row["locationSource"], row["magSource"], city)
 
