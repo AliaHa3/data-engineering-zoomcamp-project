@@ -31,7 +31,7 @@ currentDay = current_date.day
 currentMonth = current_date.month
 currentYear = current_date.year
 
-past_date = datetime.now() - timedelta(hour=1)
+past_date = datetime.now() - timedelta(hours=1)
 pastSecond = past_date.second
 pastMinute = past_date.minute
 pastHour = past_date.hour
