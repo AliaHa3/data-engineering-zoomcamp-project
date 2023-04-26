@@ -112,13 +112,13 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--input_file', required=True)
 # parser.add_argument('--output_file', required=True)
-parser.add_argument('--output_table', required=True)
+# parser.add_argument('--output_table', required=True)
 
 args = parser.parse_args()
 
 input_file = args.input_file
 # output_file = args.output_file
-output_table = args.output_table
+# output_table = args.output_table
 
 
 conf = SparkConf() \
