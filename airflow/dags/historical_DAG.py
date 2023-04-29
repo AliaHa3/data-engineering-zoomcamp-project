@@ -190,13 +190,13 @@ local_to_gcs_task = PythonOperator(
 
 spark_transformation_task = BashOperator(
     task_id=f"spark_transformation_task",
-    bash_command="python /opt/airflow/dags/spark_job.py --input_file '{{ ti.xcom_pull(key='general2',task_ids='gcs_to_bq_external_task')['bucket_file_path']}}' ",
+    bash_command="python /opt/airflow/dags/spark_job.py --input_file '{{ ti.xcom_pull(key='general2',task_ids='local_to_gcs_task')['bucket_file_path']}}' ",
     dag=dag
 )
 
 clear_local_files_task = BashOperator(
     task_id=f"clear_local_files_task",
-    bash_command="rm {{ ti.xcom_pull(key='general2',task_ids='gcs_to_bq_external_task')['local_file_path'] }}",
+    bash_command="rm {{ ti.xcom_pull(key='general2',task_ids='local_to_gcs_task')['local_file_path'] }}",
     dag=dag
 )
 
