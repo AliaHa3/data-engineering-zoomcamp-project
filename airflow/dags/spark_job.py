@@ -163,17 +163,41 @@ df.printSchema()
 
 enrich_rdd = df.rdd.map(lambda row: country_enrichment_string_func(row))
 
-new_df = spark.createDataFrame(enrich_rdd, schema=enrich_schema)
-new_df.printSchema()
-new_df.show()
+enrich_df = spark.createDataFrame(enrich_rdd, schema=enrich_schema)
+enrich_df.printSchema()
+enrich_df.show()
 
 
-# new_df.write.parquet(output_file, mode='overwrite')
-
-new_df.write.format('bigquery') \
+enrich_df.write.format('bigquery') \
     .option('table', f"{BQ_DATASET_PROD}.full_data2") \
     .option("partitionField", "time") \
     .option("partitionType", "DAY") \
     .option("clusteredFields", "city") \
     .mode('append') \
+    .save()
+
+enrich_df.createOrReplaceTempView("enrich_full_data")
+
+
+earthquake_dwh_df = spark.sql(
+"""
+select 
+date_trunc(time, year) as _year, 
+date_trunc(time, month) as _month, 
+date_trunc(time, day) as _day,
+city,
+count(*) earthquakes_total_count, 
+max(depth) max_depth,
+max(mag) max_mag,
+avg(depth) avg_depth,
+avg(mag) avg_mag,
+from enrich_full_data
+group by 1,2,3,4;
+"""
+)
+
+earthquake_dwh_df.write.format('bigquery') \
+    .option('table', f"{BQ_DATASET_PROD}.earthquake_dwh") \
+    .option("clusteredFields", "city") \
+    .mode('overwrite') \
     .save()
