@@ -202,7 +202,7 @@ enrich_df.show()
 # earthquake_dwh_df.show()
 
 enrich_df.write.format('bigquery') \
-    .option('table', f"{BQ_DATASET_PROD}.full_data2") \
+    .option('table', f"{BQ_DATASET_PROD}.full_data") \
     .option("partitionField", "time") \
     .option("partitionType", "DAY") \
     .option("clusteredFields", "city") \
