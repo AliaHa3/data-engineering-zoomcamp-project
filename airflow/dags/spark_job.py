@@ -206,7 +206,7 @@ max(depth) max_depth,
 max(mag) max_mag,
 avg(depth) avg_depth,
 avg(mag) avg_mag,
-from "{BQ_DATASET_PROD}.raw_data"
+from {BQ_DATASET_PROD}.raw_data
 group by 1,2,3,4;
 """
 
