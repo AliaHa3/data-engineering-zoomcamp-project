@@ -191,6 +191,10 @@ enrich_df.write.format('bigquery') \
     .mode('append') \
     .save()
 
+enrich_df.write.format('bigquery') \
+    .option('table', f"{BQ_DATASET_PROD}.raw_data") \
+    .mode('append') \
+    .save()
 
 query = f"""
 select 
@@ -203,13 +207,13 @@ max(depth) max_depth,
 max(mag) max_mag,
 avg(depth) avg_depth,
 avg(mag) avg_mag,
-from f"{BQ_DATASET_PROD}.full_data"
+from f"{BQ_DATASET_PROD}.raw_data"
 group by 1,2,3,4;
 """
 
 # earthquake_dwh_df = spark.sql(query)
 
-
+#.schema(dwh_schema)
 earthquake_dwh_df = spark.read.format("bigquery").option("query", query).load()
 earthquake_dwh_df.show()
 
