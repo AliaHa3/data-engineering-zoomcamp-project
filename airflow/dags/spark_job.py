@@ -167,7 +167,7 @@ enrich_df = spark.createDataFrame(enrich_rdd, schema=enrich_schema)
 enrich_df.printSchema()
 enrich_df.show()
 
-enrich_df.createOrReplaceTempView("enrich_full_data")
+enrich_df.registerTempTable("enrich_full_data")
 
 
 earthquake_dwh_df = spark.sql(
