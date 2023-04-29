@@ -110,40 +110,40 @@ def check_table_exists(table_name):
     return result
 
 
-def create_external_table(table_name, **kwargs):
-    print(kwargs)
-    print(kwargs['ti'])
-    dict_data = kwargs['ti'].xcom_pull(key="general2",task_ids="local_to_gcs_task")
-    print(dict_data)
-    # dict_data = json.loads(xcom_data)
-    # print(dict_data)
+# def create_external_table(table_name, **kwargs):
+#     print(kwargs)
+#     print(kwargs['ti'])
+#     dict_data = kwargs['ti'].xcom_pull(key="general2",task_ids="local_to_gcs_task")
+#     print(dict_data)
+#     # dict_data = json.loads(xcom_data)
+#     # print(dict_data)
 
-    file_name = dict_data['file_name']
+#     file_name = dict_data['file_name']
 
-    # is_exist = check_table_exists(
-    #     f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
-    # if is_exist is None:
-    #     query_str = f"""
-    #     CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
-    #     OPTIONS (
-    #     format = 'CSV',
-    #     uris = ['gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz']
-    #     )
-    #     """
-    #     result = execute_query(query_str)
+#     # is_exist = check_table_exists(
+#     #     f'{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}')
+#     # if is_exist is None:
+#     #     query_str = f"""
+#     #     CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
+#     #     OPTIONS (
+#     #     format = 'CSV',
+#     #     uris = ['gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz']
+#     #     )
+#     #     """
+#     #     result = execute_query(query_str)
     
-    query_str = f"""
-        CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
-        OPTIONS (
-        format = 'CSV',
-        uris = ['gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz']
-        )
-        """
-    result = execute_query(query_str)
-    dict_data["bucket_file_path"] = f"gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz"
+#     query_str = f"""
+#         CREATE OR REPLACE EXTERNAL TABLE `{GCP_PROJECT_ID}.{BQ_DATASET_STAGING}.{table_name}`
+#         OPTIONS (
+#         format = 'CSV',
+#         uris = ['gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz']
+#         )
+#         """
+#     result = execute_query(query_str)
+#     dict_data["bucket_file_path"] = f"gs://{GCP_GCS_BUCKET}/earthquakes/{file_name}.csv.gz"
 
-    kwargs['ti'].xcom_push(key="general3", value=dict_data)
-    # return ti
+#     kwargs['ti'].xcom_push(key="general3", value=dict_data)
+#     # return ti
 
 
 def print_hello():
@@ -180,24 +180,24 @@ local_to_gcs_task = PythonOperator(
 
 spark_transformation_task = BashOperator(
     task_id=f"spark_transformation_task",
-    bash_command="python /opt/airflow/dags/spark_job.py --input_file '{{ ti.xcom_pull(key='general3',task_ids='gcs_to_bq_external_task')['bucket_file_path']}}' ",
+    bash_command="python /opt/airflow/dags/spark_job.py --input_file '{{ ti.xcom_pull(key='general2',task_ids='gcs_to_bq_external_task')['bucket_file_path']}}' ",
     dag=dag
 )
 
 clear_local_files_task = BashOperator(
     task_id=f"clear_local_files_task",
-    bash_command="rm {{ ti.xcom_pull(key='general3',task_ids='gcs_to_bq_external_task')['local_file_path'] }}",
+    bash_command="rm {{ ti.xcom_pull(key='general2',task_ids='gcs_to_bq_external_task')['local_file_path'] }}",
     dag=dag
 )
 
-gcs_to_bq_external_task = PythonOperator(
-    task_id=f"gcs_to_bq_external_task",
-    python_callable=create_external_table,
-    provide_context=True,
-    dag=dag,
-    op_kwargs={
-        "table_name": f"{external_table_name}"
-    }
-)
+# gcs_to_bq_external_task = PythonOperator(
+#     task_id=f"gcs_to_bq_external_task",
+#     python_callable=create_external_table,
+#     provide_context=True,
+#     dag=dag,
+#     op_kwargs={
+#         "table_name": f"{external_table_name}"
+#     }
+# )
 
-extract_data_to_local_task >> local_to_gcs_task >> gcs_to_bq_external_task >> spark_transformation_task >> clear_local_files_task
+extract_data_to_local_task >> local_to_gcs_task  >> spark_transformation_task >> clear_local_files_task
