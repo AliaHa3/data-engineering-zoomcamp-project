@@ -20,9 +20,6 @@ TMP_BUCKET = "dtc_data_lake_dezoomcamp-375819"
 path = "gs://earthquakes_data_lake_dezoomcamp-375819/earthquakes/data_20230424T090501_20230424T100501_20230424100501.csv.gz"
 
 
-# geolocator = Nominatim(user_agent="geoapiEnrichment")
-# reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
-
 full_columns = [
     "time", "latitude", "longitude", "depth", "mag", "magType", "nst", "gap", "dmin", "rms",
     "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError",
@@ -150,7 +147,9 @@ conf = SparkConf() \
     .set("spark.jars", f"{SPARK_GCS_JAR},{SPARK_BQ_JAR}") \
     .set("spark.hadoop.google.cloud.auth.service.account.enable", "true") \
     .set("spark.hadoop.google.cloud.auth.service.account.json.keyfile", SERVICE_ACCOUNT_JSON_PATH) \
-    .set('temporaryGcsBucket', TMP_BUCKET)
+    .set('temporaryGcsBucket', TMP_BUCKET) \
+    .set("viewsEnabled","true") \
+    .set("materializationDataset",f"{BQ_DATASET_PROD}")
 
 sc = SparkContext(conf=conf)
 
@@ -214,6 +213,7 @@ group by 1,2,3,4;
 # earthquake_dwh_df = spark.sql(query)
 
 #.schema(dwh_schema)
+
 earthquake_dwh_df = spark.read.format("bigquery").option("query", query).load()
 earthquake_dwh_df.show()
 
