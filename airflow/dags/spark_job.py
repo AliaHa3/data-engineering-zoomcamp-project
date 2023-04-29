@@ -12,7 +12,7 @@ from geopy.extra.rate_limiter import RateLimiter
 
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
-production_table_name = 'full_data'
+# production_table_name = 'full_data'
 
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
@@ -80,10 +80,6 @@ enrich_schema = types.StructType(
         types.StructField("locationSource", types.StringType(), True),
         types.StructField("magSource", types.StringType(), True),
         types.StructField("city", types.StringType(), True)
-        # types.StructField("state", types.StringType(), True),
-        # types.StructField("country", types.StringType(), True),
-        # types.StructField("country_code", types.StringType(), True),
-        # types.StructField("zipcode", types.StringType(), True)
     ]
 )
 
@@ -175,6 +171,9 @@ new_df.show()
 # new_df.write.parquet(output_file, mode='overwrite')
 
 new_df.write.format('bigquery') \
-    .option('table', f"{BQ_DATASET_PROD}.{production_table_name}") \
+    .option('table', f"{BQ_DATASET_PROD}.full_data2") \
+    .option("partitionField", "time") \
+    .option("partitionType", "DAY") \
+    .option("clusteredFields", "city") \
     .mode('append') \
     .save()

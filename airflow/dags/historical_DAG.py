@@ -176,7 +176,7 @@ extract_data_to_local_task = PythonOperator(
     provide_context=True,
     dag=dag,
     op_kwargs={
-        "years": [2021,2022,2023]
+        "years": [2020,2021,2022,2023]
     }
 )
 
