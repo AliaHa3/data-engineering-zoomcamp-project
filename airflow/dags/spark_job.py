@@ -167,15 +167,6 @@ enrich_df = spark.createDataFrame(enrich_rdd, schema=enrich_schema)
 enrich_df.printSchema()
 enrich_df.show()
 
-
-enrich_df.write.format('bigquery') \
-    .option('table', f"{BQ_DATASET_PROD}.full_data2") \
-    .option("partitionField", "time") \
-    .option("partitionType", "DAY") \
-    .option("clusteredFields", "city") \
-    .mode('append') \
-    .save()
-
 enrich_df.createOrReplaceTempView("enrich_full_data")
 
 
@@ -195,6 +186,16 @@ from enrich_full_data
 group by 1,2,3,4;
 """
 )
+earthquake_dwh_df.show()
+
+enrich_df.write.format('bigquery') \
+    .option('table', f"{BQ_DATASET_PROD}.full_data2") \
+    .option("partitionField", "time") \
+    .option("partitionType", "DAY") \
+    .option("clusteredFields", "city") \
+    .mode('append') \
+    .save()
+
 
 earthquake_dwh_df.write.format('bigquery') \
     .option('table', f"{BQ_DATASET_PROD}.earthquake_dwh") \
