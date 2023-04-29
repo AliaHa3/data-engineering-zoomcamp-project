@@ -81,6 +81,7 @@ def upload_to_bucket(**kwargs):
     blob = bucket.blob(blob_name)
     blob.upload_from_filename(local_file_path)
 
+    dict_data["bucket_file_path"] = f"gs://{GCP_GCS_BUCKET}/{blob_name}"
     kwargs['ti'].xcom_push(key="general2", value=dict_data)
     
     # returns a public url
