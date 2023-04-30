@@ -1,6 +1,6 @@
 # Data Engineering | Zoomcamp Course Project
 
-![image](https://user-images.githubusercontent.com/98602171/235354582-63dd27fd-9ba3-4a9e-a87f-428f6e6b9652.png)
+![image](https://user-images.githubusercontent.com/98602171/235354699-40962ebf-4d05-43f0-a509-a236f77fd10f.png)
 
 
 
