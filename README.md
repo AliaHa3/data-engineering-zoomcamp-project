@@ -25,6 +25,10 @@ The dashboard will have three parts with control filters on time and city that d
     * Earthquakes counts per city
     * Maximum intense earthquakes (mag)
 
+To accelerate queries and data processing, the final table "full_data" has been partitioned by date of earthquakes (column 'time') as this column is one of the filter control in the dashboard also one of the dashboard's sections considers taking the latest date partition only (where the date is equal today) and the table is clustered by geodata (column 'city') which is a filter control in the dashboard too.
+The original column 'time' type is transformed from string to date type in order to be able to partition by time in spark transformation steps.
+
+
 ## Data Pipeline 
 
 The pipeline could be stream or batch: this is the first thing you'll need to decide 
@@ -32,6 +36,14 @@ The pipeline could be stream or batch: this is the first thing you'll need to de
 * If you want to consume data in real-time and put them to data lake - go with stream.
 * If you want to run things periodically (e.g. hourly/daily), go with batch
 
+* Hourly_DAG
+
+* Historical_DAG
+
+
+## Data Table
+
+The 
 
 ## Technologies and Tools
 
