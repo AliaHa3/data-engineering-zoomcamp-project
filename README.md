@@ -1,5 +1,7 @@
-# data-engineering-zoomcamp-project
-data-engineering-zoomcamp-project
+# Data Engineering | Zoomcamp Course Project
+
+![image](https://user-images.githubusercontent.com/98602171/235354582-63dd27fd-9ba3-4a9e-a87f-428f6e6b9652.png)
+
 
 
 ### Problem statement
@@ -11,17 +13,17 @@ There will be two running pipelines (DAG):
 - Historical_DAG: this DAG will run once to extract the historical earthquake data (2020, 2021, 2022, 2023 till today).
 
 The dashboard will have three parts with control filters on time and city that demonstrate the analytics points below:
-1- Historical data analytics:
-    - Earthquakes trending with times
-    - Earthquakes counts per city
-    - Maximum intense earthquakes (mag)
-2- Spatial data analytics:
-    - World map with earthquakes geolocation
-    - Heat world map that shows the earthquakes mags (intense)
-3- Last 24 hours analytics:
-    - Earthquakes trending with times
-    - Earthquakes counts per city
-    - Maximum intense earthquakes (mag)
+* Historical data analytics:
+    * Earthquakes trending with times
+    * Earthquakes counts per city
+    * Maximum intense earthquakes (mag)
+* Spatial data analytics:
+    * World map with earthquakes geolocation
+    * Heat world map that shows the earthquakes mags (intense)
+* Last 24 hours analytics:
+    * Earthquakes trending with times
+    * Earthquakes counts per city
+    * Maximum intense earthquakes (mag)
 
 ## Data Pipeline 
 
@@ -42,20 +44,21 @@ The pipeline could be stream or batch: this is the first thing you'll need to de
 - Data Warehouse - [**BigQuery**](https://cloud.google.com/bigquery)
 - Data Visualization - [**Looker Studio (Google Data Studio)**](https://lookerstudio.google.com/overview?)
 - Language - [**Python**](https://www.python.org)
+
 ## Dashboard
 
 The dashboard will have three parts with control filters on time and city that demonstrate the analytics points below:
-1- Historical data analytics:
-    - Earthquakes trending with times
-    - Earthquakes counts per city
-    - Maximum intense earthquakes (mag)
-2- Spatial data analytics:
-    - World map with earthquakes geolocation
-    - Heat world map that shows the earthquakes mags (intense)
-3- Last 24 hours analytics:
-    - Earthquakes trending with times
-    - Earthquakes counts per city
-    - Maximum intense earthquakes (mag)
+* Historical data analytics:
+    * Earthquakes trending with times
+    * Earthquakes counts per city
+    * Maximum intense earthquakes (mag)
+* Spatial data analytics:
+    * World map with earthquakes geolocation
+    * Heat world map that shows the earthquakes mags (intense)
+* Last 24 hours analytics:
+    * Earthquakes trending with times
+    * Earthquakes counts per city
+    * Maximum intense earthquakes (mag)
 
 Example of a dashboard: ![image](https://user-images.githubusercontent.com/4315804/159771458-b924d0c1-91d5-4a8a-8c34-f36c25c31a3c.png)
 
