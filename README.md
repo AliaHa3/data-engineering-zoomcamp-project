@@ -1,7 +1,5 @@
 # Data Engineering | Zoomcamp Course Project
 
-![image](https://user-images.githubusercontent.com/98602171/235354699-40962ebf-4d05-43f0-a509-a236f77fd10f.png)
-
 ![image](https://user-images.githubusercontent.com/98602171/235377169-8e02e9a5-1cfd-4812-9607-e2bf842867c4.png)
 
 
@@ -36,10 +34,7 @@ The original column 'time' type is transformed from string to date type in order
 
 ## Data Pipeline 
 
-The pipeline could be stream or batch: this is the first thing you'll need to decide 
-
-* If you want to consume data in real-time and put them to data lake - go with stream.
-* If you want to run things periodically (e.g. hourly/daily), go with batch
+* Full pipeline
 
 * Hourly_DAG
 
@@ -66,15 +61,20 @@ The dashboard will have three parts with control filters on time and city that d
     * Earthquakes trending with times
     * Earthquakes counts per city
     * Maximum intense earthquakes (mag)
+    ![image](https://user-images.githubusercontent.com/98602171/235377306-51f21e4b-d37d-48fc-a4a8-a1d51ed91c64.png)
+
 * Spatial data analytics:
     * World map with earthquakes geolocation
     * Heat world map that shows the earthquakes mags (intense)
+    ![image](https://user-images.githubusercontent.com/98602171/235377334-bf23efb2-4ce8-4296-86cf-50e4b222f063.png)
+
 * Last 24 hours analytics:
     * Earthquakes trending with times
     * Earthquakes counts per city
     * Maximum intense earthquakes (mag)
+    ![image](https://user-images.githubusercontent.com/98602171/235377357-4325c04d-b3a5-44e5-b8c1-ef878eb4278f.png)
 
-Example of a dashboard: ![image](https://user-images.githubusercontent.com/4315804/159771458-b924d0c1-91d5-4a8a-8c34-f36c25c31a3c.png)
+You can check the live dashboard here 
 
 
 ## Setup
