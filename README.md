@@ -2,6 +2,8 @@
 
 ![image](https://user-images.githubusercontent.com/98602171/235354699-40962ebf-4d05-43f0-a509-a236f77fd10f.png)
 
+![image](https://user-images.githubusercontent.com/98602171/235377169-8e02e9a5-1cfd-4812-9607-e2bf842867c4.png)
+
 
 
 ### Problem statement
@@ -28,6 +30,9 @@ The dashboard will have three parts with control filters on time and city that d
 To accelerate queries and data processing, the final table "full_data" has been partitioned by date of earthquakes (column 'time') as this column is one of the filter control in the dashboard also one of the dashboard's sections considers taking the latest date partition only (where the date is equal today) and the table is clustered by geodata (column 'city') which is a filter control in the dashboard too.
 The original column 'time' type is transformed from string to date type in order to be able to partition by time in spark transformation steps.
 
+![image](https://user-images.githubusercontent.com/98602171/235377176-1eeff0b9-18f7-4e1b-b688-b878fb87b92f.png)
+
+
 
 ## Data Pipeline 
 
@@ -41,9 +46,6 @@ The pipeline could be stream or batch: this is the first thing you'll need to de
 * Historical_DAG
 
 
-## Data Table
-
-The 
 
 ## Technologies and Tools
 
