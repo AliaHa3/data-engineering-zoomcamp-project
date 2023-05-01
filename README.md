@@ -35,6 +35,7 @@ The original column 'time' type is transformed from string to date type in order
 ## Data Pipeline 
 
 * Full pipeline
+   ![image](https://user-images.githubusercontent.com/98602171/235486499-87cba1ff-2f3f-4ff5-919b-b241cc866189.png)
 
 * Hourly_DAG
    ![image](https://user-images.githubusercontent.com/98602171/235377455-f82b774d-c4fe-425a-b813-aa3c6b18f697.png)
