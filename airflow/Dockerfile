@@ -69,12 +69,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 WORKDIR $AIRFLOW_HOME
 RUN mkdir data
 RUN mkdir lib
-RUN mkdir logs/scheduler
 
-RUN chmod 777 dags
-RUN chmod 777 logs
-RUN chmod 777 data
-RUN chmod 777 lib
+RUN chmod 777 dags/
+RUN chmod 777 logs/
+RUN chmod 777 data/
+RUN chmod 777 lib/
 
 RUN gsutil cp gs://hadoop-lib/gcs/gcs-connector-hadoop3-2.2.5.jar ./lib/gcs-connector-hadoop3-2.2.5.jar
 RUN gsutil cp gs://spark-lib/bigquery/spark-bigquery-latest_2.12.jar ./lib/spark-bigquery-latest_2.12.jar
