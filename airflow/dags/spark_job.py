@@ -6,10 +6,6 @@ from pyspark.sql import types
 import argparse
 import os
 
-from geopy.geocoders import Nominatim
-from geopy.point import Point
-from geopy.extra.rate_limiter import RateLimiter
-
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
 
@@ -92,25 +88,6 @@ dwh_schema = types.StructType(
         types.StructField("avg_mag", types.FloatType(), True)
     ]
 )
-
-def country_enrichment(row):
-    geolocator = Nominatim(user_agent="geoapiEnrichment")
-    reverse = RateLimiter(geolocator.reverse, min_delay_seconds=1)
-    print("inside")
-    # location = geolocator.reverse(Point(row['latitude'],row['longitude']))
-    location = reverse(Point(row['latitude'], row['longitude']))
-    address = {}
-    if location is not None:
-        address = location.raw['address']
-
-    city = address.get('city', '')
-    state = address.get('state', '')
-    country = address.get('country', '')
-    country_code = address.get('country_code', '')
-    zipcode = address.get('postcode', '')
-
-    return (
-        row["time"], row["latitude"], row["longitude"], row["depth"], row["mag"], row["magType"], row["nst"], row["gap"], row["dmin"], row["rms"], row["net"], row["id"], row["updated"], row["place"], row["type"], row["horizontalError"], row["depthError"], row["magError"], row["magNst"], row["status"], row["locationSource"], row["magSource"], city, state, country, country_code, zipcode)
 
 
 def country_enrichment_string_func(row):

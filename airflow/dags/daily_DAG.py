@@ -6,7 +6,6 @@ from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.operators.bash import BashOperator
 import os
-import json
 
 
 GCP_PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
