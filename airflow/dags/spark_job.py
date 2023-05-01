@@ -12,7 +12,6 @@ from geopy.extra.rate_limiter import RateLimiter
 
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
-# production_table_name = 'full_data'
 
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
@@ -127,19 +126,10 @@ def country_enrichment_string_func(row):
 
 
 parser = argparse.ArgumentParser()
-
 parser.add_argument('--input_file', required=True)
-# parser.add_argument('--country_enrichment_string', default='False')
-# parser.add_argument('--output_file', required=True)
-# parser.add_argument('--output_table', required=True)
 
 args = parser.parse_args()
-
 input_file = args.input_file
-# country_enrichment_string = True if args.country_enrichment_string == 'True' else False
-# output_file = args.output_file
-# output_table = args.output_table
-
 
 conf = SparkConf() \
     .setMaster('local[*]') \
@@ -209,10 +199,6 @@ avg(mag) avg_mag,
 from {BQ_DATASET_PROD}.raw_data
 group by 1,2,3,4;
 """
-
-# earthquake_dwh_df = spark.sql(query)
-
-#.schema(dwh_schema)
 
 earthquake_dwh_df = spark.read.format("bigquery").option("query", query).load()
 earthquake_dwh_df.show()
