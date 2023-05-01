@@ -69,6 +69,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 WORKDIR $AIRFLOW_HOME
 RUN mkdir data
 RUN mkdir lib
+RUN mkdir logs/scheduler
 
 RUN chmod 777 dags
 RUN chmod 777 logs
