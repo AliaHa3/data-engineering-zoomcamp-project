@@ -9,18 +9,18 @@
 The project aims to build an end-to-end data pipeline that extracts earthquake data periodically (hourly) from  [**USGS API**](https://www.usgs.gov/about). The extracted data will be processed and enriched with a new geo column (city) that will be extracted from one of the existing columns that have a long address (place) then create desired tables for our dashboard to generate analytics.
 
 There will be two running pipelines (DAG):
-- Hourly_DAG: this DAG will run hourly to extract new data starting from the installation time.
-- Historical_DAG: this DAG will run once to extract the historical earthquake data (2020, 2021, 2022, 2023 till today).
+- **Hourly_DAG**: this DAG will run hourly to extract new data starting from the installation time.
+- **Historical_DAG**: this DAG will run once to extract the historical earthquake data (2020, 2021, 2022, 2023 till today).
 
 The dashboard will have three parts with control filters on time and city that demonstrate the analytics points below:
-* Historical data analytics:
+* **Historical data analytics:**
     * Earthquakes trending with times
     * Earthquakes counts per city
     * Maximum intense earthquakes (mag)
-* Spatial data analytics:
+* **Spatial data analytics:**
     * World map with earthquakes geolocation
     * Heat world map that shows the earthquakes mags (intense)
-* Last 24 hours analytics:
+* **Last 24 hours analytics:**
     * Earthquakes trending with times
     * Earthquakes counts per city
     * Maximum intense earthquakes (mag)
@@ -31,16 +31,15 @@ The original column 'time' type is transformed from string to date type in order
 ![image](https://user-images.githubusercontent.com/98602171/235377176-1eeff0b9-18f7-4e1b-b688-b878fb87b92f.png)
 
 
-
 ## Data Pipeline 
 
-* Full pipeline
-   ![image](https://user-images.githubusercontent.com/98602171/235486499-87cba1ff-2f3f-4ff5-919b-b241cc866189.png)
+* **Full pipeline**
+   ![image](https://user-images.githubusercontent.com/98602171/235487296-0b2d9eb4-89ec-405a-81c2-3bfca8c315db.png)
 
-* Hourly_DAG
+* **Hourly_DAG**
    ![image](https://user-images.githubusercontent.com/98602171/235377455-f82b774d-c4fe-425a-b813-aa3c6b18f697.png)
 
-* Historical_DAG
+* **Historical_DAG**
    ![image](https://user-images.githubusercontent.com/98602171/235377439-be686e2c-1d4e-478c-a55d-887c6821bb57.png)
 
 
@@ -56,7 +55,9 @@ The original column 'time' type is transformed from string to date type in order
 - Data Visualization - [**Looker Studio (Google Data Studio)**](https://lookerstudio.google.com/overview?)
 - Language - [**Python**](https://www.python.org)
 
-## Dashboard
+
+
+## Analytics Dashboard
 
 The dashboard will have three parts with control filters on time and city that demonstrate the analytics points below:
 * Historical data analytics:
@@ -77,7 +78,6 @@ The dashboard will have three parts with control filters on time and city that d
     ![image](https://user-images.githubusercontent.com/98602171/235377357-4325c04d-b3a5-44e5-b8c1-ef878eb4278f.png)
 
 You can check the live dashboard here 
-
 
 ## Setup
 
