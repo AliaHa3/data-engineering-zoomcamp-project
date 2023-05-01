@@ -71,6 +71,8 @@ WORKDIR $AIRFLOW_HOME
 RUN mkdir data
 RUN mkdir lib
 
+RUN chmod 777 dags
+
 RUN chmod 777 data
 RUN chmod 777 lib
 
