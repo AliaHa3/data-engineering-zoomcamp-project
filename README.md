@@ -77,7 +77,7 @@ The dashboard will have three parts with control filters on time and city that d
     * Maximum intense earthquakes (mag)
     ![image](https://user-images.githubusercontent.com/98602171/235377357-4325c04d-b3a5-44e5-b8c1-ef878eb4278f.png)
 
-You can check the live dashboard [**here**](https://lookerstudio.google.com/reporting/dedce778-8abd-492c-9bce-97b199d5fdfa).
+You can check the live dashboard [**here**](https://lookerstudio.google.com/reporting/dedce778-8abd-492c-9bce-97b199d5fdfa) (Please note that the live dashboad may be not working as the free tier of google cloud will end soon).
 
 ## Setup
 
