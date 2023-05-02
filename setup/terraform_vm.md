@@ -1,4 +1,4 @@
-# Clone the repository in your local machine
+## Clone the repository in your local machine
 ---
 ```bash
 git clone https://github.com/AliaHa3/data-engineering-zoomcamp-project.git
@@ -8,7 +8,7 @@ git clone https://github.com/AliaHa3/data-engineering-zoomcamp-project.git
 cd data-engineering-zoomcamp-project/terraform
 ```
 
-# Spin up the Infra
+## Spin up the Infra
 ---
 - Initiate terraform and download the required dependencies-
 
