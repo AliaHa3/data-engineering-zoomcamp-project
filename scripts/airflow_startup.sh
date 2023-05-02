@@ -2,7 +2,7 @@
 
 pwd
 cd scripts
-bash setup_config.sh
+source setup_config.sh
 cd ../airflow
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 docker-compose build
