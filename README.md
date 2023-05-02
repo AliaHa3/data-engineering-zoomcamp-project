@@ -30,6 +30,9 @@ The original column 'time' type is transformed from string to date type in order
 
 ![image](https://user-images.githubusercontent.com/98602171/235377176-1eeff0b9-18f7-4e1b-b688-b878fb87b92f.png)
 
+### Data structure
+
+[reference](https://earthquake.usgs.gov/data/comcat/index.php#dmin)
 
 ## Data Pipeline 
 
