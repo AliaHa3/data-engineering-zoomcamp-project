@@ -1,7 +1,7 @@
 # Clone the repository in your local machine
 ---
 ```bash
-    git clone https://github.com/AliaHa3/data-engineering-zoomcamp-project.git
+git clone https://github.com/AliaHa3/data-engineering-zoomcamp-project.git
 ```
 
 ```bash

@@ -115,6 +115,6 @@ and login with (airflow:airflow) for the credentials<br>
 11. You can check your data in bigquery tables.
 
 ## Reference
-[DataTalks Club](https://datatalks.club/)
-[Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp#week-1-introduction--prerequisites)
-[MichaelShoemaker's setup steps](https://github.com/MichaelShoemaker/shoemaker-de-zoomcamp-final-project/blob/main/GitLikeMe.md)
+[DataTalks Club](https://datatalks.club/)<br>
+[Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp#week-1-introduction--prerequisites)<br>
+[MichaelShoemaker's setup steps](https://github.com/MichaelShoemaker/shoemaker-de-zoomcamp-final-project/blob/main/GitLikeMe.md)<br>
