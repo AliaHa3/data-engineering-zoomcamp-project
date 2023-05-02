@@ -1,9 +1,7 @@
 #!/bin/bash
 
-pwd
-cd scripts
-source setup_config.sh
-cd ../airflow
+source scripts/setup_config.sh
+cd airflow
 echo -e "AIRFLOW_UID=$(id -u)" > .env
 docker-compose build
 docker-compose up airflow-init
