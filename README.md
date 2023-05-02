@@ -6,7 +6,7 @@
 
 ### Problem statement
 
-The project aims to build an end-to-end data pipeline that extracts earthquake data periodically (hourly) from  [**USGS API**](https://www.usgs.gov/about). The extracted data will be processed and enriched with a new geo column (city) that will be extracted from one of the existing columns that have a long address (place) then create desired tables for our dashboard to generate analytics.
+The project aims to build an end-to-end data pipeline that extracts earthquake data periodically (hourly) from  [**USGS API**](https://earthquake.usgs.gov/fdsnws/event/1/). The extracted data will be processed and enriched with a new geo column (city) that will be extracted from one of the existing columns that have a long address (place) then create desired tables for our dashboard to generate analytics.
 
 There will be two running pipelines (DAG):
 - **Hourly_DAG**: this DAG will run hourly to extract new data starting from the installation time.
