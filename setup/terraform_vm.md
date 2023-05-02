@@ -1,22 +1,15 @@
-## Terraform Infra Setup
-
-
-# Install Terraform
-
+# Clone the repository in your local machine
+---
+```bash
+    git clone https://github.com/AliaHa3/data-engineering-zoomcamp-project.git
 ```
-curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-sudo apt-get update && sudo apt-get install terraform
-```
-
-# Make sure you have alreadey cloneed the repository in your local machine.
 
 ```bash
 cd data-engineering-zoomcamp-project/terraform
 ```
 
-# Spin up the Infra -
-
+# Spin up the Infra
+---
 - Initiate terraform and download the required dependencies-
 
   ```bash

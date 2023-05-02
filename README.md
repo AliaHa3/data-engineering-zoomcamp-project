@@ -80,28 +80,29 @@ The dashboard will have three parts with control filters on time and city that d
 You can check the live dashboard [**here**](https://lookerstudio.google.com/reporting/dedce778-8abd-492c-9bce-97b199d5fdfa) (Please note that the live dashboad may be not working as the free tier of google cloud will end soon).
 
 ## Setup
-
-1. Setup your google cloud machine project and compute machine [step1](setup/gcp_vm.md)
-2. Clone the repo
+1. Setup your google cloud project and service account [step1](setup/gcp_account.md)
+2. install terraform on your local machine [step2](https://github.com/DataTalksClub/data-engineering-zoomcamp/tree/main/week_1_basics_n_setup/1_terraform_gcp)
+3. Setup terraform to create pipeline required infrastructure [step3](setup/terraform_vm.md)
+4. SSH to your google compute engine VM [step4](setup/gcp_vm.md)
+5. Clone the repo to your google compute engine VM
     ```bash
     git clone https://github.com/AliaHa3/data-engineering-zoomcamp-project.git
     ```
-3. Setup terraform [step2](setup/terraform_vm.md)
-4. Setup Anaconda + docker  + docker-compose
+6. Setup Anaconda + docker  + docker-compose
      ```bash
     cd data-engineering-zoomcamp-project
     bash scripts/vm_setup.sh
     ```
-5. Update the enviroment variables in below file with your specific project_id and buckets
+7. Update the enviroment variables in below file with your specific project_id and buckets
     ```bash
     cat data-engineering-zoomcamp-project/scripts/setup_config.sh
     ```
-6. Setup pipeline docker image (airflow+spark)
+8. Setup pipeline docker image (airflow+spark)
      ```bash
     cd data-engineering-zoomcamp-project
     bash scripts/airflow_startup.sh
     ```
-7. in Visual Studio code click on ports and forward port 8080<br>
+9. in Visual Studio code click on ports and forward port 8080<br>
   ![ForwardPort](https://user-images.githubusercontent.com/7443591/160403735-7c40babc-7d63-4b51-90da-c065e5b254a0.png)
 
 go to localhost:8080<br>
@@ -109,6 +110,11 @@ go to localhost:8080<br>
 and login with (airflow:airflow) for the credentials<br>
 ![AirflowLogin](https://user-images.githubusercontent.com/7443591/160413081-4f4e606f-09f6-4d4f-9b94-5241f37091a6.png)
 
-8. Enable the historical_DAG and you should see it run. It takes 10-15 minutres to finish
-9. Enable the hourly_DAG
-10. You can check your data in bigquery tables.
+9. Enable the historical_DAG and you should see it run. It takes 10-15 minutres to finish
+10. Enable the hourly_DAG
+11. You can check your data in bigquery tables.
+
+## Reference
+[DataTalks Club](https://datatalks.club/)
+[Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp#week-1-introduction--prerequisites)
+[MichaelShoemaker's setup steps](https://github.com/MichaelShoemaker/shoemaker-de-zoomcamp-final-project/blob/main/GitLikeMe.md)
