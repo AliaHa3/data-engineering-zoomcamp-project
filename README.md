@@ -106,7 +106,7 @@ The dashboard will have three parts with control filters on time and city that d
     * Maximum intense earthquakes (mag)
     ![image](https://user-images.githubusercontent.com/98602171/235377357-4325c04d-b3a5-44e5-b8c1-ef878eb4278f.png)
 
-You can check the live dashboard [**here**](https://lookerstudio.google.com/reporting/dedce778-8abd-492c-9bce-97b199d5fdfa) (Please note that the live dashboad may be not working as the free tier of google cloud will end soon).
+You can check the live dashboard [**here**](https://lookerstudio.google.com/reporting/dedce778-8abd-492c-9bce-97b199d5fdfa). (the last 24 hours part of dashboard may not have data if the pipeline is not running live so please choose and filter on one date from historical)
 
 ## Setup
 1. Setup your google cloud project and service account [step1](setup/gcp_account.md)
