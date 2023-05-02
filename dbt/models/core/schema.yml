@@ -1,8 +1,0 @@
-version: 2
-
-sources:
-    - name: staging
-      database: "{{ env_var('GCP_PROJECT_ID') }}"
-      schema: earthquake_stg
-      tables:
-        - name: raw_data        

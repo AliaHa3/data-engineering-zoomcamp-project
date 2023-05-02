@@ -113,7 +113,16 @@ and login with (airflow:airflow) for the credentials<br>
 9. Enable the historical_DAG and you should see it run. It takes 10-15 minutres to finish
 10. Enable the hourly_DAG
 11. You can check your data in bigquery tables.
-
+12. if you want to stop docker image you can run below command
+    ```bash
+    cd data-engineering-zoomcamp-project
+    bash scripts/airflow_stop.sh
+    ```
+    or to delete and clean all docker image related file
+    ```bash
+    cd data-engineering-zoomcamp-project
+    bash scripts/airflow_clear.sh
+    ```
 ## Reference
 [DataTalks Club](https://datatalks.club/)<br>
 [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp#week-1-introduction--prerequisites)<br>
