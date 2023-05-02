@@ -10,11 +10,9 @@ import os
 
 GCP_PROJECT_ID = os.environ.get('GCP_PROJECT_ID')
 GCP_GCS_BUCKET = os.environ.get('GCP_GCS_BUCKET')
-BQ_DATASET_STAGING = os.environ.get('BIGQUERY_DATASET', 'earthquake_stg')
 BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
 
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-external_table_name = 'daily_staging'
 
 EXECUTION_MONTH = '{{ logical_date.strftime("%-m") }}'
 EXECUTION_DAY = '{{ logical_date.strftime("%-d") }}'
@@ -74,17 +72,6 @@ def upload_to_bucket(**kwargs):
 
     dict_data["bucket_file_path"] = f"gs://{GCP_GCS_BUCKET}/{blob_name}"
     kwargs['ti'].xcom_push(key="general2", value=dict_data)
-
-
-def print_hello():
-    print(file_name)
-    print(dataset_url)
-    print(local_file_path)
-    print(GCP_PROJECT_ID)
-    print(GCP_GCS_BUCKET)
-    print(BQ_DATASET_STAGING)
-    print(EXECUTION_DATETIME_STR)
-    return 'Hello world from first Airflow DAG!'
 
 
 dag = DAG('hourly_DAG', description='Hourly DAG', schedule_interval='5 * * * *',

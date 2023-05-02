@@ -8,18 +8,12 @@ import os
 
 SERVICE_ACCOUNT_JSON_PATH = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
 BQ_DATASET_PROD = os.environ.get('BIGQUERY_DATASET', 'earthquake_prod')
+TMP_BUCKET = os.environ.get('TMP_BUCKET') #"dtc_data_lake_dezoomcamp-375819"
 
 SPARK_GCS_JAR = "/opt/airflow/lib/gcs-connector-hadoop3-2.2.5.jar"
 SPARK_BQ_JAR = "/opt/airflow/lib/spark-bigquery-latest_2.12.jar"
-TMP_BUCKET = "dtc_data_lake_dezoomcamp-375819"
-path = "gs://earthquakes_data_lake_dezoomcamp-375819/earthquakes/data_20230424T090501_20230424T100501_20230424100501.csv.gz"
 
 
-full_columns = [
-    "time", "latitude", "longitude", "depth", "mag", "magType", "nst", "gap", "dmin", "rms",
-    "net", "id", "updated", "place", "type", "horizontalError", "depthError", "magError",
-    "magNst", "status", "locationSource", "magSource", "city", "state", "country", "country_code", "zipcode"
-]
 schema = types.StructType(
     [
         types.StructField("time", types.TimestampType(), True),
