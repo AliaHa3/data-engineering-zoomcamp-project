@@ -81,38 +81,34 @@ You can check the live dashboard [**here**](https://lookerstudio.google.com/repo
 
 ## Setup
 
-## Peer review criteria
+1. Setup your google cloud machine project and compute machine [step1](setup/gcp_vm.md)
+2. Clone the repo
+    ```bash
+    git clone https://github.com/AliaHa3/data-engineering-zoomcamp-project.git
+    ```
+3. Setup terraform [step2](setup/terraform_vm.md)
+4. Setup Anaconda + docker  + docker-compose
+     ```bash
+    cd data-engineering-zoomcamp-project
+    bash scripts/vm_setup.sh
+    ```
+5. Update the enviroment variables in below file with your specific project_id and buckets
+    ```bash
+    cat data-engineering-zoomcamp-project/scripts/setup_config.sh
+    ```
+6. Setup pipeline docker image (airflow+spark)
+     ```bash
+    cd data-engineering-zoomcamp-project
+    bash scripts/airflow_startup.sh
+    ```
+7. in Visual Studio code click on ports and forward port 8080<br>
+  ![ForwardPort](https://user-images.githubusercontent.com/7443591/160403735-7c40babc-7d63-4b51-90da-c065e5b254a0.png)
 
-* Problem description
-    * 0 points: Problem is not described
-    * 1 point: Problem is described but shortly or not clearly 
-    * 2 points: Problem is well described and it's clear what the problem the project solves
-* Cloud
-    * 0 points: Cloud is not used, things run only locally
-    * 2 points: The project is developed in the cloud
-    * 4 points: The project is developed in the cloud and IaC tools are used
-* Data ingestion (choose either batch or stream)
-    * Batch / Workflow orchestration
-        * 0 points: No workflow orchestration
-        * 2 points: Partial workflow orchestration: some steps are orchestrated, some run manually
-        * 4 points: End-to-end pipeline: multiple steps in the DAG, uploading data to data lake
-    * Stream
-        * 0 points: No streaming system (like Kafka, Pulsar, etc)
-        * 2 points: A simple pipeline with one consumer and one producer
-        * 4 points: Using consumer/producers and streaming technologies (like Kafka streaming, Spark streaming, Flink, etc)
-* Data warehouse
-    * 0 points: No DWH is used
-    * 2 points: Tables are created in DWH, but not optimized
-    * 4 points: Tables are partitioned and clustered in a way that makes sense for the upstream queries (with explanation)
-* Transformations (dbt, spark, etc)
-    * 0 points: No tranformations
-    * 2 points: Simple SQL transformation (no dbt or similar tools)
-    * 4 points: Tranformations are defined with dbt, Spark or similar technologies
-* Dashboard
-    * 0 points: No dashboard
-    * 2 points: A dashboard with 1 tile
-    * 4 points: A dashboard with 2 tiles
-* Reproducibility
-    * 0 points: No instructions how to run code at all
-    * 2 points: Some instructions are there, but they are not complete
-    * 4 points: Instructions are clear, it's easy to run the code, and the code works
+go to localhost:8080<br>
+  
+and login with (airflow:airflow) for the credentials<br>
+![AirflowLogin](https://user-images.githubusercontent.com/7443591/160413081-4f4e606f-09f6-4d4f-9b94-5241f37091a6.png)
+
+8. Enable the historical_DAG and you should see it run. It takes 10-15 minutres to finish
+9. Enable the hourly_DAG
+10. You can check your data in bigquery tables.
