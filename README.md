@@ -32,6 +32,32 @@ The original column 'time' type is transformed from string to date type in order
 
 ### Data structure
 
+| Column | Type | 
+|--------|-------------|
+| time |  TimestampType |
+| latitude | FloatType |
+| longitude | FloatType |
+| depth | FloatType |
+| mag | FloatType  |
+| magType | StringType |
+| nst | FloatType |
+| gap | FloatType |
+| dmin | FloatType |
+| rms | FloatType |
+| net | StringType |
+| id | StringType |
+| updated | TimestampType |
+| place | StringType |
+| type | FloatType |
+| horizontalError | FloatType |
+| depthError | FloatType |
+| magError | FloatType |
+| magNst | FloatType |
+| status | StringType |
+| locationSource | StringType |
+| magSource | StringType |
+
+
 [reference](https://earthquake.usgs.gov/data/comcat/index.php#dmin)
 
 ## Data Pipeline 
