@@ -52,7 +52,9 @@ Then at the top choose Connect to Host and choose the name you gave the VM in th
 Create a folder `.google/credentials` under the `${HOME}`directory and upload the json file with the credentials generated through Google Cloud when creating the service account.  
 If you use Visual Studio Code, just drag and drop the file.  
 Example: `${HOME}/.google/credentials/google_credentials.json`  
-
+```
+  ${HOME}/.google/credentials/google_credentials.json
+```
 
 # Activate google cloud library
 

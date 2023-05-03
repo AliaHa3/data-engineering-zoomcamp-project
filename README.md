@@ -30,7 +30,7 @@ The original column 'time' type is transformed from string to date type in order
 
 ![image](https://user-images.githubusercontent.com/98602171/235377176-1eeff0b9-18f7-4e1b-b688-b878fb87b92f.png)
 
-### Data structure
+### Data schema
 
 | Column | Type | 
 |--------|-------------|
@@ -78,7 +78,7 @@ The original column 'time' type is transformed from string to date type in order
 - Infrastructure as Code software (IaC) - [**Terraform**](https://www.terraform.io)
 -  Containerization - [**Docker**](https://www.docker.com), [**Docker Compose**](https://docs.docker.com/compose/)
 - Workflow Orchestration - [**Airflow**](https://airflow.apache.org)
-- Batch processing - [**Apache Spark**](https://spark.apache.org/)
+- Batch processing - [**Apache Spark**](https://spark.apache.org/), [**PySpark**](https://spark.apache.org/docs/latest/api/python/)
 - Data Lake - [**Google Cloud Storage**](https://cloud.google.com/storage)
 - Data Warehouse - [**BigQuery**](https://cloud.google.com/bigquery)
 - Data Visualization - [**Looker Studio (Google Data Studio)**](https://lookerstudio.google.com/overview?)
